@@ -1,0 +1,1219 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Eny App · La Libertad Costa</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#070E1A; --panel:#0D1728; --panel2:#111E33;
+  --line:rgba(103,232,249,.12); --line2:rgba(148,178,214,.14);
+  --cyan:#22D3EE; --cyan-deep:#0E7490;
+  --text:#E8F0FB; --muted:#8CA0BD;
+  --green:#34D399; --amber:#FBBF24; --coral:#FB7185; --violet:#A78BFA;
+  --radius:16px;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  background:var(--ink); color:var(--text);
+  font-family:'Inter',system-ui,sans-serif; font-size:15px; min-height:100vh;
+  background-image:
+    radial-gradient(1200px 500px at 80% -10%, rgba(34,211,238,.08), transparent 60%),
+    radial-gradient(900px 400px at -10% 20%, rgba(14,116,144,.10), transparent 55%);
+  padding-bottom:calc(86px + env(safe-area-inset-bottom));
+}
+::selection{background:rgba(34,211,238,.3)}
+
+/* ---------- HEADER ---------- */
+header{padding:18px 18px 12px;border-bottom:1px solid var(--line);position:relative;overflow:hidden}
+header::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:scan 5s linear infinite;opacity:.55}
+@keyframes scan{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.brand{display:flex;align-items:center;gap:12px;max-width:1050px;margin:0 auto}
+.logo{width:42px;height:42px;border-radius:12px;flex:none;
+  background:linear-gradient(135deg,var(--cyan),var(--cyan-deep));
+  display:grid;place-items:center;font-family:'Space Grotesk';font-weight:700;font-size:19px;color:#03151C;
+  box-shadow:0 0 22px rgba(34,211,238,.35)}
+.brand h1{font-family:'Space Grotesk';font-size:17px;font-weight:600}
+.brand .sub{font-size:11px;color:var(--muted);letter-spacing:.6px;text-transform:uppercase;margin-top:1px}
+.sync{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:10.5px;color:var(--muted);font-family:'JetBrains Mono'}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse 2.2s infinite}
+@keyframes pulse{50%{opacity:.35}}
+
+main{max-width:1050px;margin:0 auto;padding:16px 16px 30px}
+section{display:none}
+section.visible{display:block;animation:fadein .28s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.screen-title{font-family:'Space Grotesk';font-size:20px;font-weight:700;margin-bottom:4px}
+.screen-sub{font-size:13px;color:var(--muted);margin-bottom:16px}
+
+/* ---------- BOTTOM NAV ---------- */
+.bottomnav{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  background:rgba(10,18,32,.92);backdrop-filter:blur(14px);
+  border-top:1px solid var(--line);
+  display:flex;justify-content:space-around;align-items:flex-end;
+  padding:8px 6px calc(10px + env(safe-area-inset-bottom));
+  max-width:100%;
+}
+.nv{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;
+  background:none;border:none;color:var(--muted);cursor:pointer;
+  font-family:'Space Grotesk';font-size:10px;letter-spacing:.4px;padding:4px 0;transition:.2s;
+}
+.nv .ic{font-size:19px;line-height:1}
+.nv.active{color:var(--cyan)}
+.nv.active .ic{filter:drop-shadow(0 0 8px rgba(34,211,238,.7))}
+.fab{
+  flex:none;width:58px;height:58px;border-radius:50%;margin:0 4px;transform:translateY(-16px);
+  background:linear-gradient(135deg,var(--cyan),var(--cyan-deep));
+  border:none;color:#03151C;font-size:28px;font-weight:700;cursor:pointer;
+  box-shadow:0 6px 24px rgba(34,211,238,.5), 0 0 0 6px rgba(34,211,238,.12);
+  transition:.2s;font-family:'Space Grotesk';
+}
+.fab:active{transform:translateY(-14px) scale(.95)}
+
+/* ---------- KPI ---------- */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:18px}
+.kpi{background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);
+  padding:14px;position:relative;overflow:hidden;cursor:pointer;transition:.2s}
+.kpi:active{transform:scale(.97)}
+.kpi:hover{border-color:var(--kc,var(--cyan))}
+.kpi::before{content:'';position:absolute;top:0;left:0;width:100%;height:2px;background:var(--kc,var(--cyan));opacity:.85}
+.kpi::after{content:'→';position:absolute;top:9px;right:11px;font-family:'JetBrains Mono';font-size:11px;color:var(--kc,var(--cyan));opacity:.55}
+.kpi .n{font-family:'JetBrains Mono';font-size:27px;font-weight:700;color:var(--kc,var(--cyan))}
+.kpi .l{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-top:3px}
+
+.card{background:var(--panel);border:1px solid var(--line2);border-radius:var(--radius);padding:16px;margin-bottom:14px}
+.card h3{font-family:'Space Grotesk';font-size:15px;font-weight:600;margin-bottom:13px;display:flex;align-items:center;gap:8px}
+.card h3 .tag{font-family:'JetBrains Mono';font-size:9.5px;color:var(--cyan);border:1px solid rgba(34,211,238,.35);padding:2px 8px;border-radius:99px;letter-spacing:1px}
+
+.bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.bar-row .bl{width:118px;font-size:12px;color:var(--muted);flex:none;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar-track{flex:1;height:9px;background:rgba(148,178,214,.1);border-radius:99px;overflow:hidden}
+.bar-fill{height:100%;border-radius:99px;background:linear-gradient(90deg,var(--cyan-deep),var(--cyan));transition:width .6s ease}
+.bar-row .bv{font-family:'JetBrains Mono';font-size:11.5px;width:34px;text-align:right}
+
+/* ---------- WIZARD REGISTRO ---------- */
+.wiz-progress{display:flex;gap:6px;margin-bottom:18px}
+.wp{flex:1;height:5px;border-radius:99px;background:rgba(148,178,214,.15);transition:.3s}
+.wp.done{background:linear-gradient(90deg,var(--cyan-deep),var(--cyan));box-shadow:0 0 8px rgba(34,211,238,.4)}
+.wstep{display:none}
+.wstep.on{display:block;animation:fadein .25s ease}
+.wq{font-family:'Space Grotesk';font-size:19px;font-weight:700;margin-bottom:4px}
+.wh{font-size:12.5px;color:var(--muted);margin-bottom:14px}
+.opt-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:9px;margin-bottom:16px}
+.opt{
+  background:var(--panel2);border:1.5px solid var(--line2);border-radius:14px;
+  padding:14px 12px;cursor:pointer;text-align:center;transition:.15s;
+  font-family:'Space Grotesk';font-size:13.5px;font-weight:500;color:var(--text);
+  display:flex;flex-direction:column;gap:5px;align-items:center;justify-content:center;min-height:64px;
+}
+.opt .em{font-size:22px}
+.opt:active{transform:scale(.95)}
+.opt:hover{border-color:rgba(34,211,238,.5)}
+.opt.sel{border-color:var(--cyan);background:rgba(34,211,238,.12);color:var(--cyan);box-shadow:0 0 14px rgba(34,211,238,.18)}
+.opt .mini{font-size:10px;color:var(--muted);font-family:'JetBrains Mono'}
+label{display:block;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin:0 0 5px 2px}
+input,select,textarea{
+  width:100%;background:var(--panel2);border:1.5px solid var(--line2);border-radius:12px;
+  padding:13px 13px;color:var(--text);font-family:'Inter';font-size:15px;outline:none;transition:.2s;
+}
+input:focus,textarea:focus,select:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(34,211,238,.12)}
+textarea{resize:vertical;min-height:80px}
+.field{margin-bottom:12px}
+.wnav{display:flex;gap:10px;margin-top:6px}
+.btn{
+  background:linear-gradient(135deg,var(--cyan),var(--cyan-deep));color:#03151C;border:none;border-radius:12px;
+  padding:14px 24px;font-family:'Space Grotesk';font-weight:600;font-size:15px;cursor:pointer;
+  transition:.2s;box-shadow:0 4px 18px rgba(34,211,238,.25);flex:1;
+}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--muted);border:1.5px solid var(--line2);box-shadow:none;flex:0 0 auto;padding:14px 18px}
+.wresume{font-size:12.5px;color:var(--muted);background:var(--panel2);border:1px dashed var(--line2);
+  border-radius:12px;padding:10px 14px;margin-bottom:14px;line-height:1.7}
+.wresume b{color:var(--cyan);font-weight:600}
+
+/* ---------- CASOS ---------- */
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:13px}
+.filters select{width:auto;min-width:126px;padding:9px 10px;font-size:13px;flex:1}
+.g-item{background:var(--panel);border:1px solid var(--line2);border-left:3px solid var(--pr,var(--cyan));
+  border-radius:14px;padding:14px 15px;margin-bottom:10px}
+.g-top{display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap}
+.g-title{font-family:'Space Grotesk';font-weight:600;font-size:15px}
+.g-loc{font-size:12px;color:var(--cyan);margin-top:2px;font-family:'JetBrains Mono'}
+.g-desc{font-size:13.5px;color:var(--muted);margin-top:8px;line-height:1.5}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-left:auto}
+.badge{font-family:'JetBrains Mono';font-size:10px;padding:3px 9px;border-radius:99px;border:1px solid;letter-spacing:.4px}
+.g-foot{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+.g-foot select{width:auto;padding:7px 10px;font-size:12.5px;border-radius:9px}
+.g-meta{font-size:11px;color:var(--muted);font-family:'JetBrains Mono'}
+.del{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:12px;font-family:'JetBrains Mono'}
+.del:active{color:var(--coral)}
+.empty{text-align:center;padding:36px 18px;color:var(--muted);font-size:14px;border:1px dashed var(--line2);border-radius:var(--radius);line-height:1.7}
+
+/* ---------- MAPA ---------- */
+.dist-tabs{display:flex;gap:7px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;scrollbar-width:none}
+.dist-tabs::-webkit-scrollbar{display:none}
+.dt{padding:9px 15px;border-radius:999px;border:1.5px solid var(--line2);background:var(--panel2);
+  color:var(--muted);cursor:pointer;font-family:'Space Grotesk';font-size:12.5px;font-weight:600;white-space:nowrap;transition:.2s}
+.dt.active{border-color:var(--cyan);color:var(--cyan);background:rgba(34,211,238,.1);box-shadow:0 0 12px rgba(34,211,238,.15)}
+.map-card{padding:12px;margin-bottom:14px}
+#mapaSVG svg{width:100%;height:auto;display:block;border-radius:12px}
+.m-dot{cursor:pointer;transition:.15s}
+.m-dot:active{r:12}
+.md-green{fill:var(--green)} .md-amber{fill:var(--amber)} .md-red{fill:var(--coral)}
+.m-halo{pointer-events:none;opacity:.32}
+.m-lbl{font-family:'Space Grotesk';font-size:13px;font-weight:600;fill:#B9CBE4;letter-spacing:.5px;text-transform:uppercase;pointer-events:none}
+.m-sub{font-family:'JetBrains Mono';font-size:9px;fill:#5E7292;letter-spacing:1.5px;pointer-events:none}
+.m-name{font-family:'Inter';font-size:10.5px;fill:#A7B9D6;pointer-events:none;font-weight:500}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin:10px 2px 0;font-size:12px;color:var(--muted)}
+.legend span{display:flex;align-items:center;gap:6px}
+.sw{width:11px;height:11px;border-radius:3px}
+.d-resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.dr{background:var(--panel);border:1px solid var(--line2);border-radius:14px;padding:13px;cursor:pointer;transition:.2s}
+.dr:active{transform:scale(.97)}
+.dr .dn{font-family:'Space Grotesk';font-weight:600;font-size:13.5px}
+.dr .dtk{height:6px;background:rgba(148,178,214,.12);border-radius:99px;overflow:hidden;margin:8px 0 6px}
+.dr .dfl{height:100%;background:linear-gradient(90deg,var(--cyan-deep),var(--green));transition:width .6s}
+.dr .dv{font-family:'JetBrains Mono';font-size:11px;color:var(--muted)}
+
+/* ---------- BOTTOM SHEET ---------- */
+.sheet-bg{position:fixed;inset:0;background:rgba(3,8,16,.6);backdrop-filter:blur(3px);z-index:60;
+  opacity:0;pointer-events:none;transition:.25s}
+.sheet-bg.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:61;
+  background:var(--panel);border-top:1px solid rgba(34,211,238,.35);border-radius:22px 22px 0 0;
+  padding:14px 20px calc(24px + env(safe-area-inset-bottom));max-width:640px;margin:0 auto;
+  transform:translateY(110%);transition:transform .3s cubic-bezier(.3,1,.4,1);
+  box-shadow:0 -10px 50px rgba(0,0,0,.6)}
+.sheet.on{transform:translateY(0)}
+.sh-handle{width:44px;height:4px;border-radius:99px;background:rgba(148,178,214,.3);margin:0 auto 14px}
+.sh-title{font-family:'Space Grotesk';font-size:19px;font-weight:700}
+.sh-sub{font-size:12.5px;color:var(--muted);margin:3px 0 12px;font-family:'JetBrains Mono'}
+.sh-status{display:inline-flex;align-items:center;gap:8px;padding:7px 14px;border-radius:99px;
+  border:1.5px solid;font-family:'Space Grotesk';font-size:13px;font-weight:600;margin-bottom:16px}
+.sh-actions{display:flex;flex-direction:column;gap:9px}
+.sh-btn{padding:14px;border-radius:13px;border:1.5px solid var(--line2);background:var(--panel2);
+  color:var(--text);font-family:'Space Grotesk';font-size:14.5px;font-weight:600;cursor:pointer;transition:.15s;text-align:center}
+.sh-btn:active{transform:scale(.97)}
+.sh-btn.primary{background:linear-gradient(135deg,var(--cyan),var(--cyan-deep));color:#03151C;border:none;box-shadow:0 4px 16px rgba(34,211,238,.3)}
+.sh-btn.warn{border-color:rgba(251,191,36,.5);color:var(--amber)}
+
+/* ---------- AVANCE ---------- */
+.tl-item{display:flex;gap:14px;position:relative;padding-bottom:18px}
+.tl-item:not(:last-child)::before{content:'';position:absolute;left:8px;top:20px;bottom:0;width:2px;
+  background:linear-gradient(180deg,rgba(34,211,238,.4),rgba(34,211,238,.06))}
+.tl-dot{width:18px;height:18px;border-radius:50%;flex:none;margin-top:2px;border:2px solid var(--tc,var(--cyan));
+  background:var(--ink);position:relative;z-index:1}
+.tl-dot::after{content:'';position:absolute;inset:4px;border-radius:50%;background:var(--tc,var(--cyan))}
+.tl-body .tn{font-family:'Space Grotesk';font-weight:600;font-size:14px}
+.tl-body .td{font-size:11.5px;color:var(--muted);margin-top:2px;font-family:'JetBrains Mono'}
+.tl-badge{font-family:'JetBrains Mono';font-size:9.5px;padding:2px 8px;border-radius:99px;border:1px solid;margin-left:8px;vertical-align:middle}
+.p-group{margin-bottom:14px}
+.p-group .pg-t{font-family:'Space Grotesk';font-size:13px;font-weight:600;color:var(--muted);margin-bottom:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:9px 13px;border-radius:11px;font-size:13px;cursor:pointer;user-select:none;
+  border:1.5px solid var(--line2);background:var(--panel2);color:var(--muted);transition:.15s;
+  display:flex;align-items:center;gap:7px;font-family:'Space Grotesk'}
+.chip:active{transform:scale(.95)}
+.chip .cnt{font-family:'JetBrains Mono';font-size:10px;opacity:.9}
+.chip.c-red{border-color:rgba(251,113,133,.4);color:#F8A5B4;background:rgba(251,113,133,.06)}
+.chip.c-amber{border-color:rgba(251,191,36,.45);color:var(--amber);background:rgba(251,191,36,.07)}
+.chip.c-green{border-color:rgba(52,211,153,.5);color:var(--green);background:rgba(52,211,153,.08)}
+
+/* ---------- ESTRUCTURA ---------- */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px}
+.e-item{display:flex;align-items:center;gap:12px;background:var(--panel2);border:1px solid var(--line2);
+  border-radius:12px;padding:11px 13px;margin-bottom:8px;flex-wrap:wrap}
+.avatar{width:36px;height:36px;border-radius:11px;flex:none;display:grid;place-items:center;
+  background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.4);color:var(--violet);
+  font-family:'Space Grotesk';font-weight:600;font-size:14px}
+.e-item .en{font-weight:600;font-size:14px}
+.e-item .ec{font-size:11.5px;color:var(--muted)}
+.e-item .ep{font-family:'JetBrains Mono';font-size:11.5px;color:var(--cyan);margin-left:auto}
+
+.toast{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(60px);
+  background:var(--panel2);border:1px solid rgba(34,211,238,.5);color:var(--text);
+  padding:12px 22px;border-radius:13px;font-size:13.5px;font-family:'Space Grotesk';
+  box-shadow:0 8px 30px rgba(0,0,0,.5);transition:.3s;z-index:99;opacity:0;max-width:90vw;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);opacity:1}
+
+@media(max-width:600px){
+  .grid2,.grid3{grid-template-columns:1fr}
+  .opt-grid{grid-template-columns:repeat(2,1fr)}
+  .bar-row .bl{width:92px}
+}
+/* ---------- VISTA ESCRITORIO (≥940px) ---------- */
+@media(min-width:940px){
+  body{padding-bottom:30px;padding-left:100px}
+  header{padding-left:24px}
+  .bottomnav{
+    top:0;bottom:0;left:0;right:auto;width:100px;
+    flex-direction:column;justify-content:flex-start;align-items:center;gap:4px;
+    padding:20px 8px;border-top:none;border-right:1px solid var(--line);
+  }
+  .nv{flex:0 0 auto;width:100%;padding:12px 0;border-radius:12px;font-size:10.5px}
+  .nv.active{background:rgba(34,211,238,.08)}
+  .fab{order:-1;transform:none;margin:0 0 18px;width:54px;height:54px}
+  .fab:active{transform:scale(.95)}
+  main{max-width:1200px;padding:22px 26px 40px}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start}
+  .two-col > .card{margin-bottom:0}
+  #listaGestiones{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+  #listaGestiones .g-item{margin-bottom:0}
+  #listaGestiones .empty{grid-column:1/-1}
+  .opt-grid{grid-template-columns:repeat(auto-fill,minmax(170px,1fr))}
+  .kpis{grid-template-columns:repeat(5,1fr)}
+  .toast{bottom:26px}
+  .sheet{max-width:480px;border-radius:22px;bottom:24px;border:1px solid rgba(34,211,238,.35)}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="logo">E</div>
+    <div>
+      <h1>Eny · Gestión Territorial</h1>
+      <div class="sub">La Libertad Costa</div>
+    </div>
+    <div class="sync"><span class="dot" id="syncDot"></span><span id="syncTxt">OK</span></div>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ PANEL ============ -->
+<section id="panel" class="visible">
+  <div class="screen-title">Panel de mando</div>
+  <div class="screen-sub">Toca cualquier tarjeta para ir directo a los detalles.</div>
+  <div class="kpis">
+    <div class="kpi" style="--kc:var(--cyan)" onclick="kpiGo('todas')"><div class="n" id="kTotal">0</div><div class="l">Gestiones totales</div></div>
+    <div class="kpi" style="--kc:var(--amber)" onclick="kpiGo('proceso')"><div class="n" id="kPend">0</div><div class="l">En proceso</div></div>
+    <div class="kpi" style="--kc:var(--green)" onclick="kpiGo('resueltas')"><div class="n" id="kRes">0</div><div class="l">Resueltas</div></div>
+    <div class="kpi" style="--kc:var(--coral)" onclick="kpiGo('urgentes')"><div class="n" id="kUrg">0</div><div class="l">Urgentes activas</div></div>
+    <div class="kpi" style="--kc:var(--violet)" onclick="kpiGo('territorio')"><div class="n" id="kCov">0%</div><div class="l">Cobertura</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card"><h3>Necesidades más frecuentes <span class="tag">TOP</span></h3><div id="chartCat"></div></div>
+    <div class="card"><h3>Gestiones por distrito <span class="tag">MAPA</span></h3><div id="chartDist"></div></div>
+    <div class="card"><h3>Canales de entrada <span class="tag">ORIGEN</span></h3><div id="chartCanal"></div></div>
+  </div>
+</section>
+
+<!-- ============ REGISTRO (WIZARD) ============ -->
+<section id="registro">
+  <div class="screen-title">Nueva gestión</div>
+  <div class="screen-sub">Solo toca opciones — en menos de 1 minuto queda registrada.</div>
+  <div class="wiz-progress">
+    <div class="wp" id="wp1"></div><div class="wp" id="wp2"></div><div class="wp" id="wp3"></div><div class="wp" id="wp4"></div>
+  </div>
+  <div class="wresume" id="wResume" style="display:none"></div>
+
+  <div class="wstep" id="ws1">
+    <div class="wq">📍 ¿Dónde?</div>
+    <div class="wh">Toca el distrito y luego el cantón.</div>
+    <div id="wDistritos" class="opt-grid"></div>
+    <div id="wCantones" class="opt-grid" style="display:none"></div>
+  </div>
+
+  <div class="wstep" id="ws2">
+    <div class="wq">🧩 ¿Qué necesita?</div>
+    <div class="wh">Toca la categoría del caso.</div>
+    <div id="wCats" class="opt-grid"></div>
+    <div class="wnav"><button class="btn ghost" onclick="wizGo(1)">← Atrás</button></div>
+  </div>
+
+  <div class="wstep" id="ws3">
+    <div class="wq">📨 ¿Cómo llegó y qué tan urgente es?</div>
+    <div class="wh">Canal de entrada:</div>
+    <div id="wCanales" class="opt-grid"></div>
+    <div class="wh">Urgencia:</div>
+    <div id="wUrgs" class="opt-grid" style="grid-template-columns:repeat(3,1fr)"></div>
+    <div class="wnav">
+      <button class="btn ghost" onclick="wizGo(2)">← Atrás</button>
+      <button class="btn" onclick="wizNext3()">Continuar →</button>
+    </div>
+  </div>
+
+  <div class="wstep" id="ws4">
+    <div class="wq">✍️ Últimos datos</div>
+    <div class="wh">Solo el nombre y la descripción son obligatorios.</div>
+    <div class="field"><label>Nombre de la persona *</label><input id="fNombre" placeholder="Ej. María López"></div>
+    <div class="field"><label>Descripción del caso *</label><textarea id="fDesc" placeholder="¿Qué necesita la persona o la comunidad?"></textarea></div>
+    <div class="field"><label>Comunidad / caserío / lotificación</label>
+      <div class="chips" id="wComs" style="margin-bottom:8px"></div>
+      <input id="fCom" placeholder="Toca una de arriba o escribe otra">
+    </div>
+    <div class="field"><label>Teléfono</label><input id="fTel" placeholder="7000-0000" inputmode="tel"></div>
+    <div class="field"><label>Responsable de seguimiento</label><input id="fResp" placeholder="Quién le dará seguimiento"></div>
+    <div class="wnav">
+      <button class="btn ghost" onclick="wizGo(3)">← Atrás</button>
+      <button class="btn" onclick="addGestion()">✓ Guardar gestión</button>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CASOS ============ -->
+<section id="gestiones">
+  <div class="screen-title">Seguimiento de casos</div>
+  <div class="screen-sub">Cambia el estado directamente en cada tarjeta.</div>
+  <div class="filters">
+    <select id="filtEstado"><option value="">Estado: todos</option><option value="__activos">Activos (sin cerrar)</option><option>Recibido</option><option>En análisis</option><option>Asignado</option><option>En gestión</option><option>Resuelto</option><option>No procede</option></select>
+    <select id="filtDistrito"><option value="">Distrito: todos</option></select>
+    <select id="filtCat"><option value="">Categoría: todas</option></select>
+    <select id="filtUrg"><option value="">Urgencia: todas</option><option>Alta</option><option>Media</option><option>Baja</option></select>
+  </div>
+  <div id="listaGestiones"></div>
+</section>
+
+<!-- ============ MAPA ============ -->
+<section id="territorio">
+  <div class="screen-title">Mapa de cobertura</div>
+  <div class="screen-sub">Toca un distrito para acercarte y ver cada cantón con nombre. Toca cualquier punto para actuar.</div>
+  <div class="dist-tabs" id="distTabs"></div>
+  <div class="card map-card">
+    <div id="mapaSVG"></div>
+    <div class="legend">
+      <span><span class="sw" style="background:var(--green)"></span> Con gestiones</span>
+      <span><span class="sw" style="background:var(--amber)"></span> Visitado</span>
+      <span><span class="sw" style="background:var(--coral)"></span> Sin llegada</span>
+    </div>
+    <div class="legend" id="legendDist" style="margin-top:6px;padding-top:8px;border-top:1px dashed var(--line2)"></div>
+  </div>
+  <div class="d-resumen" id="dResumen"></div>
+  <div class="card" style="margin-top:14px">
+    <h3>Listado completo de cantones <span class="tag" id="listTag">TODOS</span></h3>
+    <p class="screen-sub" style="margin-bottom:12px">Aquí aparece cada cantón sin excepción — toca uno para ver su estado o registrar. Con <b style="color:var(--cyan)">＋ Agregar zona</b> puedes sumar lotificaciones, comunidades o cantones que falten.</p>
+    <div id="listaCompleta"></div>
+  </div>
+</section>
+
+<!-- ============ AVANCE ============ -->
+<section id="avance">
+  <div class="screen-title">Hasta dónde hemos llegado</div>
+  <div class="screen-sub">La ruta de la campaña, cantón por cantón.</div>
+  <div class="kpis">
+    <div class="kpi" style="--kc:var(--green)" onclick="kpiGo('territorio')"><div class="n" id="aCub">0</div><div class="l">Cantones alcanzados</div></div>
+    <div class="kpi" style="--kc:var(--coral)" onclick="kpiGo('territorio')"><div class="n" id="aFalta">0</div><div class="l">Faltan por llegar</div></div>
+    <div class="kpi" style="--kc:var(--cyan)"><div class="n" id="aSem">0</div><div class="l">Nuevos · 7 días</div></div>
+    <div class="kpi" style="--kc:var(--violet)"><div class="n" id="aMes">0</div><div class="l">Nuevos · 30 días</div></div>
+  </div>
+  <div class="two-col">
+    <div class="card"><h3>Ruta recorrida <span class="tag">CRONOLOGÍA</span></h3><div id="timeline"></div></div>
+    <div class="card"><h3>Dónde falta llegar <span class="tag">OBJETIVOS</span></h3><div id="pendientes"></div></div>
+  </div>
+</section>
+
+<!-- ============ ESTRUCTURA ============ -->
+<section id="estructura">
+  <div class="screen-title">Estructura del equipo</div>
+  <div class="screen-sub">Coordinadores y enlaces por distrito.</div>
+  <div class="card">
+    <h3>Agregar miembro <span class="tag">NI</span></h3>
+    <div class="grid3">
+      <div class="field"><label>Nombre</label><input id="eNombre" placeholder="Nombre completo"></div>
+      <div class="field"><label>Cargo</label>
+        <select id="eCargo"><option>Coordinador/a distrital</option><option>Subcoordinador/a</option><option>Coordinador/a de cantón</option><option>Enlace de comunidad</option><option>Voluntario/a</option></select>
+      </div>
+      <div class="field"><label>Distrito</label><select id="eDistrito"></select></div>
+    </div>
+    <div class="grid2">
+      <div class="field"><label>Cantón / zona</label><input id="eZona" placeholder="Ej. El Zonte"></div>
+      <div class="field"><label>Teléfono</label><input id="eTel" placeholder="7000-0000" inputmode="tel"></div>
+    </div>
+    <button class="btn" id="btnMiembro" onclick="addMiembro()">Agregar a la estructura</button>
+  </div>
+  <div id="listaEstructura"></div>
+</section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottomnav">
+  <button class="nv active" data-t="panel"><span class="ic">◈</span>Panel</button>
+  <button class="nv" data-t="gestiones"><span class="ic">☰</span>Casos</button>
+  <button class="fab" onclick="openWizard()">＋</button>
+  <button class="nv" data-t="territorio"><span class="ic">◉</span>Mapa</button>
+  <button class="nv" data-t="avance"><span class="ic">⟶</span>Avance</button>
+  <button class="nv" data-t="estructura"><span class="ic">⬡</span>Equipo</button>
+</nav>
+
+<!-- BOTTOM SHEET -->
+<div class="sheet-bg" id="sheetBg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sh-handle"></div>
+  <div id="sheetContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= DATOS TERRITORIALES ================= */
+const TERRITORIO = {
+  "La Libertad": ["Casco urbano (Puerto)","Cangrejera","El Cimarrón","El Majahual","Melara","San Alfredo","San Diego","San Rafael","Santa Cruz","Tepeagua","Toluca"],
+  "Chiltiupán": ["Casco urbano","Cuervo Abajo","Cuervo Arriba","El Regadío","El Tecolote","El Zonte","Julupe","Las Flores","Las Termópilas","Santa Lucía","Santa Marta","Siberia","Taquillo"],
+  "Tamanique": ["Casco urbano","Buenos Aires","El Cuervo","El Palmar","El Pinal","El Sunzal","San Alfonso","San Antonio","San Benito","San Emilio","San Isidro","Santa Lucía","Tarpeya"],
+  "Teotepeque": ["Casco urbano","El Matazano","El Níspero","Los Izotes","Mizata","San Benito","San Isidro","San Marcos","Sihuapilapa","Valle El Ángel"],
+  "Jicalapa": ["Casco urbano","El Níspero","La Argentina","La Perla","San José El Tablón"]
+};
+const COORDS = {
+ "Teotepeque|Casco urbano":[13.578,-89.530],"Teotepeque|El Matazano":[13.630,-89.550],
+ "Teotepeque|El Níspero":[13.600,-89.510],"Teotepeque|Los Izotes":[13.615,-89.542],
+ "Teotepeque|Mizata":[13.500,-89.585],"Teotepeque|San Benito":[13.545,-89.560],
+ "Teotepeque|San Isidro":[13.598,-89.575],"Teotepeque|San Marcos":[13.645,-89.528],
+ "Teotepeque|Sihuapilapa":[13.505,-89.552],"Teotepeque|Valle El Ángel":[13.565,-89.520],
+ "Jicalapa|Casco urbano":[13.520,-89.478],
+ "Jicalapa|El Níspero":[13.512,-89.494],"Jicalapa|La Argentina":[13.535,-89.487],
+ "Jicalapa|La Perla":[13.495,-89.482],"Jicalapa|San José El Tablón":[13.547,-89.463],
+ "Chiltiupán|Casco urbano":[13.595,-89.455],"Chiltiupán|Cuervo Abajo":[13.625,-89.443],
+ "Chiltiupán|Cuervo Arriba":[13.642,-89.455],"Chiltiupán|El Regadío":[13.573,-89.470],
+ "Chiltiupán|El Tecolote":[13.652,-89.470],"Chiltiupán|El Zonte":[13.494,-89.440],
+ "Chiltiupán|Julupe":[13.513,-89.455],"Chiltiupán|Las Flores":[13.612,-89.430],
+ "Chiltiupán|Las Termópilas":[13.585,-89.438],"Chiltiupán|Santa Lucía":[13.602,-89.466],
+ "Chiltiupán|Santa Marta":[13.563,-89.450],"Chiltiupán|Siberia":[13.552,-89.428],
+ "Chiltiupán|Taquillo":[13.530,-89.437],
+ "Tamanique|Casco urbano":[13.576,-89.418],"Tamanique|Buenos Aires":[13.600,-89.408],
+ "Tamanique|El Cuervo":[13.618,-89.415],"Tamanique|El Palmar":[13.543,-89.412],
+ "Tamanique|El Pinal":[13.592,-89.395],"Tamanique|El Sunzal":[13.495,-89.392],
+ "Tamanique|San Alfonso":[13.622,-89.392],"Tamanique|San Antonio":[13.558,-89.400],
+ "Tamanique|San Benito":[13.548,-89.386],"Tamanique|San Emilio":[13.532,-89.408],
+ "Tamanique|San Isidro":[13.610,-89.378],"Tamanique|Santa Lucía":[13.578,-89.380],
+ "Tamanique|Tarpeya":[13.518,-89.400],
+ "La Libertad|Casco urbano (Puerto)":[13.488,-89.322],"La Libertad|Cangrejera":[13.520,-89.250],
+ "La Libertad|El Cimarrón":[13.535,-89.298],"La Libertad|El Majahual":[13.492,-89.365],
+ "La Libertad|Melara":[13.505,-89.262],"La Libertad|San Alfredo":[13.545,-89.272],
+ "La Libertad|San Diego":[13.478,-89.282],"La Libertad|San Rafael":[13.530,-89.340],
+ "La Libertad|Santa Cruz":[13.500,-89.240],"La Libertad|Tepeagua":[13.550,-89.318],
+ "La Libertad|Toluca":[13.492,-89.226]
+};
+/* Comunidades, caseríos y playas verificadas por cantón (el equipo puede agregar más) */
+const COMUNIDADES = {
+ "Jicalapa|La Perla": ["La Playa","San Matías","Zona Verde","Desvío Arriba","Shalpa","Arenera","Hermosa Provincia","Las Cruces","El Rincón","Piedra Viva","El Carrizo","Los Tres Ríos"],
+ "Jicalapa|San José El Tablón": ["San Pedro","Joya Verde","Anales"],
+ "Tamanique|El Sunzal": ["Playa El Sunzal","Playa El Tunco","Hacienda El Sunzal","Lotif. Costa Brava"],
+ "Tamanique|El Palmar": ["Playa El Palmarcito","La Leona"],
+ "Chiltiupán|El Zonte": ["Playa El Zonte"],
+ "Teotepeque|Mizata": ["Playa Mizata"],
+ "La Libertad|Casco urbano (Puerto)": ["Playa La Paz","Playa El Obispo","Punta Roca","Playa Conchalío","El Cocal"],
+ "La Libertad|El Majahual": ["Playa El Majahual","Playa San Blas"],
+ "La Libertad|San Diego": ["Playa San Diego","El Amatal"]
+};
+const ESTADOS = ["Recibido","En análisis","Asignado","En gestión","Resuelto","No procede"];
+/* color de identidad de cada distrito */
+const DCOLOR = {
+  "Teotepeque":"#A78BFA",   // violeta
+  "Jicalapa":"#F472B6",     // rosa
+  "Chiltiupán":"#22D3EE",   // cyan
+  "Tamanique":"#FB923C",    // naranja
+  "La Libertad":"#60A5FA"   // azul
+};
+/* casco convexo (contorno) de un conjunto de puntos proyectados */
+function hull(pts){
+  if(pts.length<3) return pts;
+  const p=[...pts].sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  const cross=(o,a,b)=>(a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0]);
+  const lo=[]; for(const q of p){ while(lo.length>=2&&cross(lo[lo.length-2],lo[lo.length-1],q)<=0)lo.pop(); lo.push(q);}
+  const up=[]; for(const q of p.reverse()){ while(up.length>=2&&cross(up[up.length-2],up[up.length-1],q)<=0)up.pop(); up.push(q);}
+  return lo.slice(0,-1).concat(up.slice(0,-1));
+}
+function padHull(h, pad){
+  const cx=h.reduce((a,p)=>a+p[0],0)/h.length, cy=h.reduce((a,p)=>a+p[1],0)/h.length;
+  return h.map(([x,y])=>{
+    const dx=x-cx, dy=y-cy, len=Math.hypot(dx,dy)||1;
+    return [x+dx/len*pad, y+dy/len*pad];
+  });
+}
+const CATS = [["💧","Agua potable"],["🏥","Salud"],["🛣️","Calles y caminos"],["⚡","Energía eléctrica"],
+  ["🏠","Vivienda"],["📚","Educación"],["💼","Empleo"],["🛡️","Seguridad"],
+  ["🌱","Medio ambiente"],["⚽","Deporte y juventud"],["👵","Adulto mayor"],["📌","Otro"]];
+const CANALES = [["🤝","Directo en territorio"],["💬","WhatsApp"],["📘","Facebook"],
+  ["📸","Instagram"],["🎵","TikTok"],["🧭","Referido por estructura"]];
+const URGS = [["🔴","Alta"],["🟡","Media"],["🟢","Baja"]];
+const KEY = "eny_dashboard_v1";
+
+let state = { gestiones: [], visitas: {}, estructura: [], extras: {}, comExtras: {} };
+let saveTimer = null;
+/* lista de cantones oficiales + zonas agregadas por el equipo */
+function TERR(d){ return TERRITORIO[d].concat((state.extras && state.extras[d]) || []); }
+/* comunidades de un cantón: verificadas + agregadas por el equipo + usadas en gestiones */
+function COM(d,c){
+  const k=d+"|"+c;
+  const base=(COMUNIDADES[k]||[]).concat((state.comExtras && state.comExtras[k])||[]);
+  state.gestiones.forEach(g=>{
+    if(g.distrito===d&&g.canton===c&&g.comunidad&&!base.some(x=>x.toLowerCase()===g.comunidad.toLowerCase())) base.push(g.comunidad);
+  });
+  return base;
+}
+function comCount(d,c,com){
+  return state.gestiones.filter(g=>g.distrito===d&&g.canton===c&&(g.comunidad||"").toLowerCase()===com.toLowerCase()).length;
+}
+
+/* ================= PERSISTENCIA ================= */
+/* Detección del entorno de guardado:
+   claude  → almacenamiento compartido del equipo (dentro de Claude)
+   local   → localStorage del navegador (GitHub Pages u hosting propio; guarda por dispositivo)
+   session → solo memoria mientras la app esté abierta */
+const hasStorage = typeof window.storage !== "undefined" && window.storage && typeof window.storage.get === "function";
+const hasLocal = (()=>{ try{ const t="__t"; localStorage.setItem(t,"1"); localStorage.removeItem(t); return true; }catch(e){ return false; } })();
+const storageMode = hasStorage ? "claude" : (hasLocal ? "local" : "session");
+async function load(){
+  try{
+    if(storageMode==="claude"){
+      const r = await window.storage.get(KEY, true);
+      if(r && r.value) state = JSON.parse(r.value);
+    } else if(storageMode==="local"){
+      const r = localStorage.getItem(KEY);
+      if(r) state = JSON.parse(r);
+    }
+  }catch(e){ /* primera vez: la clave no existe aún */ }
+  /* blindaje de estructura del estado */
+  if(!Array.isArray(state.gestiones)) state.gestiones = [];
+  if(!state.visitas || typeof state.visitas !== "object") state.visitas = {};
+  if(!Array.isArray(state.estructura)) state.estructura = [];
+  if(!state.extras || typeof state.extras !== "object") state.extras = {};
+  if(!state.comExtras || typeof state.comExtras !== "object") state.comExtras = {};
+  const t=document.getElementById('syncTxt'), d=document.getElementById('syncDot');
+  if(storageMode==="local"){
+    t.textContent="GUARDADO EN ESTE DISPOSITIVO";
+    d.style.background="var(--cyan)"; d.style.boxShadow="0 0 10px var(--cyan)";
+  } else if(storageMode==="session"){
+    t.textContent="SOLO SESIÓN";
+    d.style.background="var(--amber)"; d.style.boxShadow="0 0 10px var(--amber)";
+  }
+  renderAll();
+}
+function save(){
+  if(storageMode==="session") return; /* solo memoria */
+  if(storageMode==="local"){
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(()=>{
+      try{ localStorage.setItem(KEY, JSON.stringify(state)); }
+      catch(e){ document.getElementById('syncTxt').textContent="ERROR AL GUARDAR"; }
+    }, 300);
+    return;
+  }
+  setSync(false);
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    try{ await window.storage.set(KEY, JSON.stringify(state), true); setSync(true); }
+    catch(e){
+      document.getElementById('syncTxt').textContent="ERROR";
+      document.getElementById('syncDot').style.background="var(--coral)";
+    }
+  }, 400);
+}
+function setSync(ok){
+  const d=document.getElementById('syncDot'), t=document.getElementById('syncTxt');
+  d.style.background = ok?"var(--green)":"var(--amber)";
+  d.style.boxShadow = ok?"0 0 10px var(--green)":"0 0 10px var(--amber)";
+  t.textContent = ok?"OK":"…";
+}
+
+/* ================= HELPERS ================= */
+const $ = id => document.getElementById(id);
+function toast(msg){ const t=$('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2200); }
+function esc(s){ return String(s||"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+function fecha(ts){ return new Date(ts).toLocaleDateString('es-SV',{day:'2-digit',month:'short',year:'2-digit'}); }
+function urgColor(u){ return u==="Alta"?"var(--coral)":u==="Media"?"var(--amber)":"var(--green)"; }
+function estColor(e){ return {"Recibido":"var(--cyan)","En análisis":"var(--violet)","Asignado":"var(--amber)","En gestión":"var(--amber)","Resuelto":"var(--green)","No procede":"var(--muted)"}[e]||"var(--cyan)"; }
+function gestCount(d,c){ return state.gestiones.filter(g=>g.distrito===d&&g.canton===c).length; }
+function isVisited(d,c){ return !!state.visitas[d+"|"+c]; }
+function primeraLlegada(d,c){
+  const ts = state.gestiones.filter(g=>g.distrito===d&&g.canton===c).map(g=>g.ts);
+  const v = state.visitas[d+"|"+c];
+  if(v && v.ts) ts.push(v.ts); else if(v===true) ts.push(0);
+  return ts.length ? Math.min(...ts) : null;
+}
+
+/* ================= NAVEGACIÓN ================= */
+function goTab(name){
+  document.querySelectorAll('.nv').forEach(x=>x.classList.toggle('active', x.dataset.t===name));
+  document.querySelectorAll('main section').forEach(x=>x.classList.toggle('visible', x.id===name));
+  window.scrollTo({top:0});
+}
+document.querySelectorAll('.nv').forEach(b=> b.onclick=()=>goTab(b.dataset.t));
+function kpiGo(tipo){
+  if(tipo==="territorio"){ goTab('territorio'); return; }
+  $('filtEstado').value=""; $('filtDistrito').value=""; $('filtCat').value=""; $('filtUrg').value="";
+  if(tipo==="proceso") $('filtEstado').value="__activos";
+  if(tipo==="resueltas") $('filtEstado').value="Resuelto";
+  if(tipo==="urgentes"){ $('filtEstado').value="__activos"; $('filtUrg').value="Alta"; }
+  renderGestiones(); goTab('gestiones');
+}
+
+/* ================= WIZARD ================= */
+let wiz = {};
+let editId = null;
+function openWizard(prefD, prefC, prefCom){
+  editId = null;
+  wiz = { distrito: prefD||null, canton: prefC||null, categoria:null, canal:"Directo en territorio", urgencia:"Media" };
+  ['fNombre','fTel','fCom','fDesc','fResp'].forEach(id=>$(id).value='');
+  if(prefCom) $('fCom').value = prefCom;
+  closeSheet();
+  renderWizard();
+  wizGo(wiz.distrito && wiz.canton ? 2 : 1);
+  goTab('registro');
+}
+function editGestion(id){
+  const g = state.gestiones.find(x=>x.id===id);
+  if(!g) return;
+  editId = id;
+  wiz = { distrito:g.distrito, canton:g.canton, categoria:g.categoria, canal:g.canal, urgencia:g.urgencia };
+  $('fNombre').value=g.nombre; $('fTel').value=g.tel||''; $('fCom').value=g.comunidad||'';
+  $('fDesc').value=g.desc; $('fResp').value=g.resp||'';
+  renderWizard();
+  wizGo(4); /* directo a los datos; con Atrás puede cambiar lugar/categoría */
+  goTab('registro');
+  toast("✎ Editando gestión de "+g.nombre);
+}
+function wizGo(n){
+  [1,2,3,4].forEach(i=>{
+    $('ws'+i).classList.toggle('on', i===n);
+    $('wp'+i).classList.toggle('done', i<=n);
+  });
+  if(n===4) renderWizComs();
+  renderResume();
+  window.scrollTo({top:0});
+}
+function renderWizComs(){
+  const el=$('wComs');
+  if(!wiz.distrito||!wiz.canton){ el.innerHTML=''; return; }
+  const coms=COM(wiz.distrito,wiz.canton);
+  const actual=($('fCom').value||'').toLowerCase();
+  el.innerHTML = coms.length
+    ? coms.map(c=>`<div class="chip ${actual===c.toLowerCase()?'c-green':''}" onclick="$('fCom').value='${c.replace(/'/g,"\\'")}';renderWizComs()">${esc(c)}</div>`).join('')
+    : `<span style="font-size:12px;color:var(--muted)">Sin comunidades registradas aún en ${esc(wiz.canton)} — escribe la primera abajo.</span>`;
+}
+function renderResume(){
+  const parts=[];
+  if(wiz.canton) parts.push(`📍 <b>${esc(wiz.canton)}, ${esc(wiz.distrito)}</b>`);
+  if(wiz.categoria) parts.push(`🧩 <b>${esc(wiz.categoria)}</b>`);
+  if(wiz.canal && wiz.categoria) parts.push(`📨 ${esc(wiz.canal)} · ${esc(wiz.urgencia)}`);
+  const el=$('wResume');
+  el.style.display = parts.length?'block':'none';
+  el.innerHTML = parts.join(' &nbsp;·&nbsp; ');
+}
+function renderWizard(){
+  $('wDistritos').innerHTML = Object.keys(TERRITORIO).map(d=>{
+    const n = TERR(d).length;
+    return `<div class="opt ${wiz.distrito===d?'sel':''}" onclick="wizPickD('${d.replace(/'/g,"\\'")}')">${esc(d)}<span class="mini">${n} zonas</span></div>`;
+  }).join('');
+  const cEl=$('wCantones');
+  if(wiz.distrito){
+    cEl.style.display='grid';
+    cEl.innerHTML = TERR(wiz.distrito).map(c=>
+      `<div class="opt ${wiz.canton===c?'sel':''}" onclick="wizPickC('${c.replace(/'/g,"\\'")}')">${esc(c)}</div>`).join('');
+  } else cEl.style.display='none';
+  $('wCats').innerHTML = CATS.map(([e,c])=>
+    `<div class="opt ${wiz.categoria===c?'sel':''}" onclick="wizPickCat('${c.replace(/'/g,"\\'")}')"><span class="em">${e}</span>${esc(c)}</div>`).join('');
+  $('wCanales').innerHTML = CANALES.map(([e,c])=>
+    `<div class="opt ${wiz.canal===c?'sel':''}" onclick="wizPickCanal('${c.replace(/'/g,"\\'")}')"><span class="em">${e}</span>${esc(c)}</div>`).join('');
+  $('wUrgs').innerHTML = URGS.map(([e,u])=>
+    `<div class="opt ${wiz.urgencia===u?'sel':''}" onclick="wizPickUrg('${u}')"><span class="em">${e}</span>${u}</div>`).join('');
+}
+function wizPickD(d){ wiz.distrito=d; wiz.canton=null; renderWizard(); renderResume(); }
+function wizPickC(c){ wiz.canton=c; renderWizard(); setTimeout(()=>wizGo(2),180); }
+function wizPickCat(c){ wiz.categoria=c; renderWizard(); setTimeout(()=>wizGo(3),180); }
+function wizPickCanal(c){ wiz.canal=c; renderWizard(); renderResume(); }
+function wizPickUrg(u){ wiz.urgencia=u; renderWizard(); renderResume(); }
+function wizNext3(){ wizGo(4); }
+
+function addGestion(){
+  const nombre=$('fNombre').value.trim(), desc=$('fDesc').value.trim();
+  if(!wiz.distrito||!wiz.canton){ toast("⚠ Falta el lugar"); wizGo(1); return; }
+  if(!wiz.categoria){ toast("⚠ Falta la categoría"); wizGo(2); return; }
+  if(!nombre||!desc){ toast("⚠ Completa nombre y descripción"); return; }
+  if(editId){
+    const g = state.gestiones.find(x=>x.id===editId);
+    if(g){
+      Object.assign(g, {
+        nombre, tel:$('fTel').value.trim(),
+        distrito:wiz.distrito, canton:wiz.canton, comunidad:$('fCom').value.trim(),
+        categoria:wiz.categoria, canal:wiz.canal, urgencia:wiz.urgencia,
+        desc, resp:$('fResp').value.trim()
+      });
+      toast("✓ Gestión actualizada");
+    }
+    editId = null;
+  } else {
+    state.gestiones.unshift({
+      id:Date.now(), ts:Date.now(), nombre, tel:$('fTel').value.trim(),
+      distrito:wiz.distrito, canton:wiz.canton, comunidad:$('fCom').value.trim(),
+      categoria:wiz.categoria, canal:wiz.canal, urgencia:wiz.urgencia,
+      desc, resp:$('fResp').value.trim(), estado:"Recibido"
+    });
+    toast("✓ Gestión registrada en "+wiz.canton+", "+wiz.distrito);
+  }
+  save(); renderAll();
+  goTab('gestiones');
+}
+
+/* ================= CASOS ================= */
+function initSelects(){
+  const dists=Object.keys(TERRITORIO);
+  const opts=dists.map(d=>`<option>${d}</option>`).join('');
+  $('filtDistrito').innerHTML=`<option value="">Distrito: todos</option>${opts}`;
+  $('eDistrito').innerHTML=opts;
+  $('filtCat').innerHTML=`<option value="">Categoría: todas</option>`+CATS.map(([,c])=>`<option>${c}</option>`).join('');
+  ['filtEstado','filtDistrito','filtCat','filtUrg'].forEach(id=>$(id).onchange=renderGestiones);
+}
+function setEstado(id,est){ const g=state.gestiones.find(x=>x.id===id); if(g){g.estado=est; save(); renderAll();} }
+let delPend=null, delTimer=null;
+function delGestion(id, btn){
+  if(delPend!==id){
+    delPend=id;
+    btn.textContent="¿Seguro? Toca de nuevo";
+    btn.style.color="var(--coral)";
+    clearTimeout(delTimer);
+    delTimer=setTimeout(()=>{ delPend=null; renderGestiones(); }, 3000);
+    return;
+  }
+  clearTimeout(delTimer); delPend=null;
+  state.gestiones=state.gestiones.filter(x=>x.id!==id); save(); renderAll();
+  toast("Gestión eliminada");
+}
+function renderGestiones(){
+  const fe=$('filtEstado').value, fd=$('filtDistrito').value, fc=$('filtCat').value, fu=$('filtUrg').value;
+  const okE=g=>!fe?true:(fe==="__activos"?!["Resuelto","No procede"].includes(g.estado):g.estado===fe);
+  const list=state.gestiones.filter(g=>okE(g)&&(!fd||g.distrito===fd)&&(!fc||g.categoria===fc)&&(!fu||g.urgencia===fu));
+  const el=$('listaGestiones');
+  if(!list.length){
+    el.innerHTML=`<div class="empty">No hay casos con estos filtros.<br>Toca el botón <b style="color:var(--cyan)">＋</b> de abajo para registrar el primero.</div>`;
+    return;
+  }
+  el.innerHTML=list.map(g=>`
+    <div class="g-item" style="--pr:${urgColor(g.urgencia)}">
+      <div class="g-top">
+        <div>
+          <div class="g-title">${esc(g.nombre)} · ${esc(g.categoria)}</div>
+          <div class="g-loc">▸ ${esc(g.canton)}, ${esc(g.distrito)}${g.comunidad?` · ${esc(g.comunidad)}`:''}</div>
+        </div>
+        <div class="badges">
+          <span class="badge" style="color:${urgColor(g.urgencia)};border-color:${urgColor(g.urgencia)}">${g.urgencia.toUpperCase()}</span>
+          <span class="badge" style="color:var(--muted);border-color:var(--line2)">${esc(g.canal)}</span>
+        </div>
+      </div>
+      <div class="g-desc">${esc(g.desc)}</div>
+      <div class="g-foot">
+        <select onchange="setEstado(${g.id},this.value)" style="color:${estColor(g.estado)};border-color:${estColor(g.estado)}">
+          ${ESTADOS.map(e=>`<option ${e===g.estado?'selected':''}>${e}</option>`).join('')}
+        </select>
+        <span class="g-meta">${fecha(g.ts)}${g.resp?` · Resp: ${esc(g.resp)}`:''}${g.tel?` · ${esc(g.tel)}`:''}</span>
+        <button class="del" style="margin-left:auto;color:var(--cyan)" onclick="editGestion(${g.id})">✎ editar</button>
+        <button class="del" style="margin-left:8px" onclick="delGestion(${g.id}, this)">✕</button>
+      </div>
+    </div>`).join('');
+}
+
+/* ================= MAPA ================= */
+let mapView = "ALL";
+function mapBounds(){
+  if(mapView==="ALL") return {lo1:-89.62, lo2:-89.20, la1:13.435, la2:13.695};
+  const pts = TERR(mapView).map(c=>COORDS[mapView+"|"+c]).filter(Boolean);
+  const las=pts.map(p=>p[0]), los=pts.map(p=>p[1]);
+  const padLo=0.018, padLa=0.02;
+  return {lo1:Math.min(...los)-padLo, lo2:Math.max(...los)+padLo, la1:Math.min(...las)-padLa-0.01, la2:Math.max(...las)+padLa};
+}
+function renderDistTabs(){
+  const all=["ALL",...Object.keys(TERRITORIO)];
+  $('distTabs').innerHTML = all.map(d=>
+    `<button class="dt ${mapView===d?'active':''}" onclick="setMapView('${d.replace(/'/g,"\\'")}')">${d==="ALL"?"🌊 Todo el municipio":esc(d)}</button>`).join('');
+}
+function setMapView(d){ mapView=d; renderDistTabs(); renderMapa(); }
+function renderMapa(){
+  const W=1000, H = mapView==="ALL" ? 700 : 640;
+  const B = mapBounds();
+  const PX=lon=>((lon-B.lo1)/(B.lo2-B.lo1))*(W-40)+20;
+  const PY=lat=>((B.la2-lat)/(B.la2-B.la1))*(H-40)+20;
+
+  const coast=[[-89.65,13.507],[-89.585,13.497],[-89.552,13.502],[-89.51,13.494],[-89.482,13.491],
+               [-89.44,13.489],[-89.392,13.491],[-89.365,13.488],[-89.322,13.484],[-89.282,13.474],
+               [-89.226,13.486],[-89.18,13.484]];
+  const cp = coast.map(([lo,la])=>`${PX(lo).toFixed(1)},${PY(la).toFixed(1)}`);
+  const coastPath="M"+cp.join(" L");
+  const seaPath=coastPath+` L${W+40},${H+40} L-40,${H+40} Z`;
+  const landPath=coastPath+` L${W+40},-40 L-40,-40 Z`;
+
+  const showZoom = mapView!=="ALL";
+  const dotR = showZoom ? 10 : 7;
+  const fSize = showZoom ? 11 : 9.5;
+  const zonaPad = showZoom ? 34 : 20;
+
+  let labels="";
+  if(mapView==="ALL"){
+    labels = [["TEOTEPEQUE",-89.565,13.672],["JICALAPA",-89.4835,13.558],["CHILTIUPÁN",-89.448,13.672],
+      ["TAMANIQUE",-89.398,13.648],["LA LIBERTAD",-89.295,13.62]].map(([t,lo,la])=>{
+      const dn = t==="LA LIBERTAD"?"La Libertad":t.charAt(0)+t.slice(1).toLowerCase();
+      const col = DCOLOR[Object.keys(DCOLOR).find(k=>k.toUpperCase()===t)]||"#B9CBE4";
+      return `<text class="m-lbl" x="${PX(lo).toFixed(1)}" y="${PY(la).toFixed(1)}" text-anchor="middle" fill="${col}">${t}</text>`;
+    }).join('');
+  }
+
+  /* zonas geográficas sombreadas por distrito */
+  const distsZ = mapView==="ALL" ? Object.keys(TERRITORIO) : [mapView];
+  let zonas="";
+  distsZ.forEach(d=>{
+    const pts = TERR(d).map(c=>COORDS[d+"|"+c]).filter(Boolean).map(([la,lo])=>[+PX(lo),+PY(la)]);
+    if(pts.length<3) return;
+    const h = padHull(hull(pts), zonaPad);
+    const path = "M"+h.map(p=>`${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" L")+" Z";
+    const col = DCOLOR[d];
+    zonas += `<path d="${path}" fill="${col}" fill-opacity=".08" stroke="${col}" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="5 5" stroke-linejoin="round"/>`;
+  });
+
+  /* acomodo de etiquetas para que no se encimen */
+  const placed=[];
+  function labelFor(x,y,txt){
+    const w = txt.length*(fSize*.58)+6, h=fSize+3;
+    const cands=[
+      [0, dotR+fSize+2, 'middle'],   // abajo
+      [0, -(dotR+5), 'middle'],      // arriba
+      [dotR+5, 4, 'start'],          // derecha
+      [-(dotR+5), 4, 'end'],         // izquierda
+      [0, dotR+fSize*2+5, 'middle'], // más abajo
+      [0, -(dotR+fSize+8), 'middle'] // más arriba
+    ];
+    for(const [dx,dy,anchor] of cands){
+      const lx=x+dx, ly=y+dy;
+      const x1=anchor==='middle'?lx-w/2:anchor==='start'?lx:lx-w;
+      const box={x1, y1:ly-h+3, x2:x1+w, y2:ly+3};
+      if(box.x1<4||box.x2>W-4) continue;
+      const clash=placed.some(b=>!(box.x2<b.x1||box.x1>b.x2||box.y2<b.y1||box.y1>b.y2));
+      if(!clash){ placed.push(box); return {lx,ly,anchor}; }
+    }
+    const dx=0, dy=dotR+fSize+2;
+    return {lx:x+dx, ly:y+dy, anchor:'middle'};
+  }
+
+  let dots="", names="";
+  const dists = mapView==="ALL" ? Object.keys(TERRITORIO) : [mapView];
+  dists.forEach(d=>TERR(d).forEach(c=>{
+    const coord=COORDS[d+"|"+c]; if(!coord) return;
+    const [la,lo]=coord, x=+PX(lo).toFixed(1), y=+PY(la).toFixed(1);
+    const count=gestCount(d,c), vis=isVisited(d,c);
+    const cls=count>0?"md-green":vis?"md-amber":"md-red";
+    const halo=count>0?`<circle class="m-halo" cx="${x}" cy="${y}" r="${dotR+7}" fill="var(--green)"/>`:"";
+    const short=c.replace('Casco urbano (Puerto)','Puerto').replace('Casco urbano','Casco');
+    const p=labelFor(x,y,short);
+    names+=`<text class="m-name" font-size="${fSize}" x="${p.lx.toFixed(1)}" y="${p.ly.toFixed(1)}" text-anchor="${p.anchor}">${esc(short)}</text>`;
+    const info=`${c} · ${d}`;
+    dots+=`${halo}<circle class="m-dot ${cls}" cx="${x}" cy="${y}" r="${dotR}" stroke="${DCOLOR[d]}" stroke-width="2.5"
+      onclick="openSheet('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}')"><title>${esc(info)}</title></circle>`;
+  }));
+  dots = names + dots; /* nombres debajo, puntos encima para que siempre se puedan tocar */
+
+  $('mapaSVG').innerHTML=`
+  <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa de La Libertad Costa">
+    <defs>
+      <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B2A3E"/><stop offset="1" stop-color="#06121F"/></linearGradient>
+      <linearGradient id="land" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#101E33"/><stop offset="1" stop-color="#0C1830"/></linearGradient>
+      <pattern id="gridp" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="rgba(140,160,189,.06)"/></pattern>
+    </defs>
+    <path d="${landPath}" fill="url(#land)"/><path d="${landPath}" fill="url(#gridp)"/>
+    <path d="${seaPath}" fill="url(#sea)"/>
+    <path d="${coastPath}" fill="none" stroke="var(--cyan)" stroke-width="2" opacity=".75"/>
+    <path d="${coastPath}" fill="none" stroke="var(--cyan)" stroke-width="7" opacity=".12"/>
+    ${zonas}
+    ${labels}
+    <text class="m-sub" x="${W/2}" y="${H-16}" text-anchor="middle">OCÉANO PACÍFICO · COSTA DEL BÁLSAMO</text>
+    ${dots}
+  </svg>`;
+
+  // resumen por distrito
+  $('dResumen').innerHTML = Object.keys(TERRITORIO).map(d=>{ const cs=TERR(d);
+    let cub=0; cs.forEach(c=>{ if(gestCount(d,c)>0||isVisited(d,c)) cub++; });
+    const pct=Math.round(cub/cs.length*100);
+    return `<div class="dr" onclick="setMapView('${d.replace(/'/g,"\\'")}')">
+      <div class="dn"><span class="sw" style="display:inline-block;background:${DCOLOR[d]};margin-right:6px;vertical-align:-1px"></span>${esc(d)}</div>
+      <div class="dtk"><div class="dfl" style="width:${pct}%"></div></div>
+      <div class="dv">${cub}/${cs.length} · ${pct}% cubierto</div>
+    </div>`;
+  }).join('');
+
+  $('legendDist').innerHTML = Object.entries(DCOLOR).map(([d,col])=>
+    `<span style="cursor:pointer" onclick="setMapView('${d.replace(/'/g,"\\'")}')"><span class="sw" style="background:${col};box-shadow:0 0 8px ${col}66"></span> ${d}</span>`).join('');
+
+  renderListaCompleta();
+}
+
+/* ================= LISTADO COMPLETO + ZONAS PROPIAS ================= */
+function chipDe(d,c){
+  const count=gestCount(d,c), vis=isVisited(d,c);
+  const cls=count>0?"c-green":vis?"c-amber":"c-red";
+  const extra=count>0?`<span class="cnt">${count} gest.</span>`:vis?`<span class="cnt">✓</span>`:"";
+  return `<div class="chip ${cls}" onclick="openSheet('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}')">${esc(c)}${extra}</div>`;
+}
+function renderListaCompleta(){
+  const dists = mapView==="ALL" ? Object.keys(TERRITORIO) : [mapView];
+  $('listTag').textContent = mapView==="ALL"
+    ? Object.keys(TERRITORIO).reduce((a,d)=>a+TERR(d).length,0)+" ZONAS"
+    : TERR(mapView).length+" ZONAS";
+  $('listaCompleta').innerHTML = dists.map(d=>{
+    const cs=TERR(d);
+    const form = zonaOpen===d ? `
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <input id="zInput" placeholder="Nombre de la zona en ${esc(d)}" style="flex:1"
+          onkeydown="if(event.key==='Enter')confirmZona('${d.replace(/'/g,"\\'")}')">
+        <button class="btn" style="flex:0 0 auto;padding:12px 18px" onclick="confirmZona('${d.replace(/'/g,"\\'")}')">✓</button>
+      </div>` : "";
+    return `<div class="p-group">
+      <div class="pg-t"><span class="sw" style="display:inline-block;background:${DCOLOR[d]};margin-right:6px;vertical-align:-1px"></span>${esc(d)} — ${cs.length} zonas</div>
+      <div class="chips">${cs.map(c=>chipDe(d,c)).join('')}
+        <div class="chip" style="border-style:dashed;color:var(--cyan);border-color:rgba(34,211,238,.5)" onclick="addZona('${d.replace(/'/g,"\\'")}')">＋ Agregar zona</div>
+      </div>${form}
+    </div>`;
+  }).join('');
+}
+let zonaOpen=null;
+function addZona(d){
+  zonaOpen = (zonaOpen===d) ? null : d;
+  renderListaCompleta();
+  if(zonaOpen){
+    const inp=document.getElementById('zInput');
+    if(inp) setTimeout(()=>inp.focus(),50);
+  }
+}
+function confirmZona(d){
+  const inp=document.getElementById('zInput');
+  const n=(inp&&inp.value||"").trim();
+  if(!n){ toast("⚠ Escribe el nombre de la zona"); return; }
+  if(TERR(d).some(c=>c.toLowerCase()===n.toLowerCase())){ toast("⚠ Esa zona ya existe en "+d); return; }
+  (state.extras[d]=state.extras[d]||[]).push(n);
+  zonaOpen=null;
+  save(); renderAll();
+  toast("✓ "+n+" agregado a "+d);
+}
+
+/* ================= BOTTOM SHEET ================= */
+let sheetD=null, sheetC=null;
+function isCustom(d,c){ return ((state.extras && state.extras[d])||[]).includes(c); }
+function openSheet(d,c){
+  sheetD=d; sheetC=c;
+  const count=gestCount(d,c), vis=isVisited(d,c);
+  const status = count>0
+    ? {t:`✓ Con ${count} gestión${count>1?'es':''} registrada${count>1?'s':''}`, col:"var(--green)"}
+    : vis ? {t:"✓ Visitado · sin gestiones aún", col:"var(--amber)"}
+    : {t:"✕ Sin llegada todavía", col:"var(--coral)"};
+  let btns = `<button class="sh-btn primary" onclick="openWizard('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}')">＋ Registrar gestión aquí</button>`;
+  if(count===0){
+    btns += vis
+      ? `<button class="sh-btn warn" onclick="sheetToggleVisita()">Quitar marca de visitado</button>`
+      : `<button class="sh-btn warn" onclick="sheetToggleVisita()">✓ Marcar como visitado</button>`;
+  } else {
+    btns += `<button class="sh-btn" onclick="verCasosDe('${d.replace(/'/g,"\\'")}')">☰ Ver casos de ${esc(d)}</button>`;
+  }
+  if(isCustom(d,c)){
+    btns += `<button class="sh-btn" onclick="renameZonaUI()">✎ Renombrar esta zona</button>`;
+    btns += `<button class="sh-btn" style="border-color:rgba(251,113,133,.5);color:var(--coral)" onclick="delZona()">🗑 Quitar esta zona</button>`;
+  }
+  const coms = COM(d,c);
+  const comChips = coms.map(x=>{
+    const n=comCount(d,c,x);
+    return `<div class="chip ${n>0?'c-green':''}" style="font-size:12px;padding:7px 11px"
+      onclick="openWizard('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}','${x.replace(/'/g,"\\'")}')">${esc(x)}${n>0?`<span class="cnt">${n}</span>`:''}</div>`;
+  }).join('');
+  const comSec = `
+    <div style="margin:2px 0 14px">
+      <div style="font-family:'Space Grotesk';font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px">Comunidades y caseríos ${coms.length?`(${coms.length})`:''}</div>
+      <div class="chips">${comChips}
+        <div class="chip" style="border-style:dashed;color:var(--cyan);border-color:rgba(34,211,238,.5);font-size:12px;padding:7px 11px" onclick="addComunidadUI()">＋ Comunidad</div>
+      </div>
+      <div id="comForm"></div>
+    </div>`;
+  $('sheetContent').innerHTML=`
+    <div class="sh-title">${esc(c)}</div>
+    <div class="sh-sub"><span class="sw" style="display:inline-block;background:${DCOLOR[d]};margin-right:6px;vertical-align:-1px"></span>Distrito de ${esc(d)} · La Libertad Costa</div>
+    <div class="sh-status" style="color:${status.col};border-color:${status.col}">${status.t}</div>
+    ${comSec}
+    <div class="sh-actions">${btns}</div>`;
+  $('sheet').classList.add('on'); $('sheetBg').classList.add('on');
+}
+function addComunidadUI(){
+  $('comForm').innerHTML = `
+    <div style="display:flex;gap:8px;margin-top:10px">
+      <input id="cInput" placeholder="Nombre de la comunidad" style="flex:1" onkeydown="if(event.key==='Enter')confirmComunidad()">
+      <button class="btn" style="flex:0 0 auto;padding:12px 18px" onclick="confirmComunidad()">✓</button>
+    </div>`;
+  setTimeout(()=>{ const i=$('cInput'); if(i) i.focus(); },60);
+}
+function confirmComunidad(){
+  const n=($('cInput').value||"").trim();
+  if(!n){ toast("⚠ Escribe el nombre"); return; }
+  if(COM(sheetD,sheetC).some(x=>x.toLowerCase()===n.toLowerCase())){ toast("⚠ Esa comunidad ya existe aquí"); return; }
+  const k=sheetD+"|"+sheetC;
+  (state.comExtras[k]=state.comExtras[k]||[]).push(n);
+  save();
+  openSheet(sheetD, sheetC);
+  toast("✓ "+n+" agregada a "+sheetC);
+}
+function closeSheet(){ $('sheet').classList.remove('on'); $('sheetBg').classList.remove('on'); }
+function sheetToggleVisita(){
+  const k=sheetD+"|"+sheetC;
+  if(state.visitas[k]) delete state.visitas[k];
+  else { state.visitas[k]={ts:Date.now()}; toast("✓ "+sheetC+" marcado como visitado"); }
+  save(); renderAll(); closeSheet();
+}
+function verCasosDe(d){
+  closeSheet();
+  $('filtEstado').value=""; $('filtCat').value=""; $('filtUrg').value="";
+  $('filtDistrito').value=d;
+  renderGestiones(); goTab('gestiones');
+}
+function renameZonaUI(){
+  $('sheetContent').innerHTML = `
+    <div class="sh-title">Renombrar zona</div>
+    <div class="sh-sub">${esc(sheetC)} · ${esc(sheetD)}</div>
+    <div class="field" style="margin:10px 0 12px">
+      <input id="rnInput" value="${esc(sheetC)}" onkeydown="if(event.key==='Enter')confirmRename()">
+    </div>
+    <div class="sh-actions">
+      <button class="sh-btn primary" onclick="confirmRename()">✓ Guardar nuevo nombre</button>
+      <button class="sh-btn" onclick="openSheet(sheetD, sheetC)">Cancelar</button>
+    </div>`;
+  setTimeout(()=>{ const i=$('rnInput'); if(i){ i.focus(); i.select(); } },60);
+}
+function confirmRename(){
+  const n=($('rnInput').value||"").trim();
+  if(!n){ toast("⚠ Escribe el nombre"); return; }
+  if(n!==sheetC && TERR(sheetD).some(c=>c.toLowerCase()===n.toLowerCase())){ toast("⚠ Ya existe una zona con ese nombre"); return; }
+  const arr = state.extras[sheetD]||[];
+  const i = arr.indexOf(sheetC);
+  if(i<0){ toast("⚠ Solo se pueden renombrar zonas agregadas por el equipo"); return; }
+  arr[i]=n;
+  /* actualizar todas las referencias existentes */
+  state.gestiones.forEach(g=>{ if(g.distrito===sheetD && g.canton===sheetC) g.canton=n; });
+  const kOld=sheetD+"|"+sheetC, kNew=sheetD+"|"+n;
+  if(state.visitas[kOld]){ state.visitas[kNew]=state.visitas[kOld]; delete state.visitas[kOld]; }
+  const viejo=sheetC; sheetC=n;
+  save(); renderAll(); closeSheet();
+  toast("✓ '"+viejo+"' ahora se llama '"+n+"'");
+}
+function delZona(){
+  if(gestCount(sheetD, sheetC)>0){ toast("⚠ No se puede quitar: tiene gestiones registradas"); return; }
+  const arr = state.extras[sheetD]||[];
+  const i = arr.indexOf(sheetC);
+  if(i<0){ toast("⚠ Solo se pueden quitar zonas agregadas por el equipo"); return; }
+  arr.splice(i,1);
+  delete state.visitas[sheetD+"|"+sheetC];
+  save(); renderAll(); closeSheet();
+  toast("Zona '"+sheetC+"' eliminada");
+}
+
+/* ================= AVANCE ================= */
+function renderAvance(){
+  const llegadas=[], pendientes={};
+  Object.keys(TERRITORIO).forEach(d=>TERR(d).forEach(c=>{
+    const ts=primeraLlegada(d,c);
+    if(ts!==null) llegadas.push({d,c,ts,nGest:gestCount(d,c)});
+    else (pendientes[d]=pendientes[d]||[]).push(c);
+  }));
+  llegadas.sort((a,b)=>b.ts-a.ts);
+  const tot=Object.keys(TERRITORIO).reduce((a,d)=>a+TERR(d).length,0);
+  const now=Date.now(), DIA=86400000;
+  $('aCub').textContent=llegadas.length+"/"+tot;
+  $('aFalta').textContent=tot-llegadas.length;
+  $('aSem').textContent=llegadas.filter(x=>x.ts&&now-x.ts<=7*DIA).length;
+  $('aMes').textContent=llegadas.filter(x=>x.ts&&now-x.ts<=30*DIA).length;
+
+  $('timeline').innerHTML = llegadas.length ? llegadas.map(x=>{
+    const conG=x.nGest>0, color=conG?"var(--green)":"var(--amber)";
+    const badge=conG?`<span class="tl-badge" style="color:var(--green);border-color:var(--green)">${x.nGest} GESTIÓN${x.nGest>1?'ES':''}</span>`
+      :`<span class="tl-badge" style="color:var(--amber);border-color:var(--amber)">VISITA</span>`;
+    const cuando=x.ts?new Date(x.ts).toLocaleDateString('es-SV',{day:'2-digit',month:'long',year:'numeric'}):"fecha no registrada";
+    return `<div class="tl-item" style="--tc:${color}"><div class="tl-dot"></div>
+      <div class="tl-body"><div class="tn">${esc(x.c)} <span style="color:var(--muted);font-weight:400">· ${esc(x.d)}</span>${badge}</div>
+      <div class="td">▸ Primera llegada: ${cuando}</div></div></div>`;
+  }).join('')
+  : `<div class="empty">Aún no hay llegadas registradas.<br>Marca visitas en el mapa o registra gestiones y la ruta se irá dibujando sola.</div>`;
+
+  const grupos=Object.entries(pendientes).filter(([,cs])=>cs.length);
+  $('pendientes').innerHTML = grupos.length ? grupos.map(([d,cs])=>`
+    <div class="p-group"><div class="pg-t">${esc(d)} — faltan ${cs.length}</div>
+    <div class="chips">${cs.map(c=>`<div class="chip c-red" onclick="openSheet('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}')">${esc(c)}</div>`).join('')}</div></div>`).join('')
+  : `<div class="empty" style="border-color:var(--green);color:var(--green)">🏆 ¡Territorio completo! La campaña ya llegó a los ${tot} cantones de La Libertad Costa.</div>`;
+}
+
+/* ================= ESTRUCTURA ================= */
+let editMemberId=null;
+function addMiembro(){
+  const n=$('eNombre').value.trim();
+  if(!n){ toast("⚠ Escribe el nombre"); return; }
+  const datos={nombre:n,cargo:$('eCargo').value,distrito:$('eDistrito').value,zona:$('eZona').value.trim(),tel:$('eTel').value.trim()};
+  if(editMemberId){
+    const m=state.estructura.find(x=>x.id===editMemberId);
+    if(m) Object.assign(m,datos);
+    editMemberId=null;
+    $('btnMiembro').textContent="Agregar a la estructura";
+    toast("✓ Miembro actualizado");
+  } else {
+    state.estructura.push({id:Date.now(),...datos});
+    toast("✓ Agregado a la estructura");
+  }
+  ['eNombre','eZona','eTel'].forEach(id=>$(id).value='');
+  save(); renderEstructura();
+}
+function editMiembro(id){
+  const m=state.estructura.find(x=>x.id===id);
+  if(!m) return;
+  editMemberId=id;
+  $('eNombre').value=m.nombre; $('eCargo').value=m.cargo; $('eDistrito').value=m.distrito;
+  $('eZona').value=m.zona||''; $('eTel').value=m.tel||'';
+  $('btnMiembro').textContent="✓ Guardar cambios";
+  window.scrollTo({top:0,behavior:'smooth'});
+  toast("✎ Editando a "+m.nombre);
+}
+function delMiembro(id){ state.estructura=state.estructura.filter(x=>x.id!==id); save(); renderEstructura(); }
+function renderEstructura(){
+  const el=$('listaEstructura');
+  const grupos=Object.keys(TERRITORIO).map(d=>{
+    const m=state.estructura.filter(x=>x.distrito===d);
+    if(!m.length) return '';
+    return `<div class="card"><h3>${d} <span class="tag">${m.length}</span></h3>`+m.map(x=>`
+      <div class="e-item"><div class="avatar">${esc((x.nombre[0]||'?')).toUpperCase()}</div>
+      <div><div class="en">${esc(x.nombre)}</div><div class="ec">${esc(x.cargo)}${x.zona?` · ${esc(x.zona)}`:''}</div></div>
+      <div class="ep">${esc(x.tel||'')}</div>
+      <button class="del" style="color:var(--cyan)" onclick="editMiembro(${x.id})">✎</button>
+      <button class="del" style="margin-left:6px" onclick="delMiembro(${x.id})">✕</button></div>`).join('')+`</div>`;
+  }).join('');
+  el.innerHTML=grupos||`<div class="empty">Aún no hay estructura registrada.<br>Agrega coordinadores y enlaces por distrito arriba.</div>`;
+}
+
+/* ================= PANEL ================= */
+function bars(container,data,max){
+  container.innerHTML = data.length ? data.map(([l,v])=>`
+    <div class="bar-row"><div class="bl" title="${esc(l)}">${esc(l)}</div>
+    <div class="bar-track"><div class="bar-fill" style="width:${max?Math.round(v/max*100):0}%"></div></div>
+    <div class="bv">${v}</div></div>`).join('')
+  : `<div class="empty" style="padding:18px">Sin datos todavía — registra la primera gestión con el botón ＋</div>`;
+}
+function renderPanel(){
+  const g=state.gestiones;
+  $('kTotal').textContent=g.length;
+  $('kRes').textContent=g.filter(x=>x.estado==="Resuelto").length;
+  $('kPend').textContent=g.filter(x=>!["Resuelto","No procede"].includes(x.estado)).length;
+  $('kUrg').textContent=g.filter(x=>x.urgencia==="Alta"&&!["Resuelto","No procede"].includes(x.estado)).length;
+  let tot=0,cub=0;
+  Object.keys(TERRITORIO).forEach(d=>TERR(d).forEach(c=>{tot++;if(gestCount(d,c)>0||isVisited(d,c))cub++;}));
+  $('kCov').textContent=tot?Math.round(cub/tot*100)+"%":"0%";
+  const count=key=>{const m={};g.forEach(x=>m[x[key]]=(m[x[key]]||0)+1);return Object.entries(m).sort((a,b)=>b[1]-a[1]);};
+  const cats=count('categoria').slice(0,8),dists=count('distrito'),canals=count('canal');
+  const mx=a=>a.length?a[0][1]:0;
+  bars($('chartCat'),cats,mx(cats)); bars($('chartDist'),dists,mx(dists)); bars($('chartCanal'),canals,mx(canals));
+}
+
+function renderAll(){ renderPanel(); renderGestiones(); renderDistTabs(); renderMapa(); renderAvance(); renderEstructura(); }
+
+initSelects();
+renderWizard();
+load();
+</script>
+</body>
+</html>
