@@ -13,7 +13,7 @@
   --line:rgba(103,232,249,.12); --line2:rgba(148,178,214,.14);
   --cyan:#22D3EE; --cyan-deep:#0E7490;
   --text:#E8F0FB; --muted:#8CA0BD;
-  --green:#34D399; --amber:#FBBF24; --coral:#FB7185; --violet:#A78BFA;
+  --green:#34D399; --amber:#FBBF24; --coral:#FB7185; --violet:#A78BFA; --celeste:#4FC3F7;
   --radius:16px;
 }
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -165,7 +165,7 @@ textarea{resize:vertical;min-height:80px}
 #mapaSVG svg{width:100%;height:auto;display:block;border-radius:12px}
 .m-dot{cursor:pointer;transition:.15s}
 .m-dot:active{r:12}
-.md-green{fill:var(--green)} .md-amber{fill:var(--amber)} .md-red{fill:var(--coral)}
+.md-green{fill:var(--green)} .md-visit{fill:var(--celeste)} .md-red{fill:var(--coral)}
 .m-halo{pointer-events:none;opacity:.32}
 .m-lbl{font-family:'Space Grotesk';font-size:13px;font-weight:600;fill:#B9CBE4;letter-spacing:.5px;text-transform:uppercase;pointer-events:none}
 .m-sub{font-family:'JetBrains Mono';font-size:9px;fill:#5E7292;letter-spacing:1.5px;pointer-events:none}
@@ -222,7 +222,7 @@ textarea{resize:vertical;min-height:80px}
 .chip:active{transform:scale(.95)}
 .chip .cnt{font-family:'JetBrains Mono';font-size:10px;opacity:.9}
 .chip.c-red{border-color:rgba(251,113,133,.4);color:#F8A5B4;background:rgba(251,113,133,.06)}
-.chip.c-amber{border-color:rgba(251,191,36,.45);color:var(--amber);background:rgba(251,191,36,.07)}
+.chip.c-cel{border-color:rgba(79,195,247,.55);color:var(--celeste);background:rgba(79,195,247,.08)}
 .chip.c-green{border-color:rgba(52,211,153,.5);color:var(--green);background:rgba(52,211,153,.08)}
 
 /* ---------- ESTRUCTURA ---------- */
@@ -300,6 +300,34 @@ textarea{resize:vertical;min-height:80px}
     <div class="kpi" style="--kc:var(--green)" onclick="kpiGo('resueltas')"><div class="n" id="kRes">0</div><div class="l">Resueltas</div></div>
     <div class="kpi" style="--kc:var(--coral)" onclick="kpiGo('urgentes')"><div class="n" id="kUrg">0</div><div class="l">Urgentes activas</div></div>
     <div class="kpi" style="--kc:var(--violet)" onclick="kpiGo('territorio')"><div class="n" id="kCov">0%</div><div class="l">Cobertura</div></div>
+  </div>
+  <div class="card">
+    <h3>☁️ Conexión con Google Drive <span class="tag" id="nubeTag">NO CONECTADO</span></h3>
+    <p class="screen-sub" style="margin-bottom:12px">Guarda los datos en una Hoja de cálculo de tu Google Drive, compartida para todo el equipo. Pega aquí el enlace del script y la clave de equipo (instrucciones en el archivo <b>INSTRUCCIONES-GOOGLE-DRIVE</b>).</p>
+    <div id="nubeForm">
+      <div class="field"><label>Enlace del script (termina en /exec)</label><input id="nubeUrl" placeholder="https://script.google.com/macros/s/..../exec"></div>
+      <div class="grid2">
+        <div class="field"><label>Clave de equipo</label><input id="nubePin" placeholder="La clave que pusiste en el script"></div>
+        <div class="field" style="display:flex;align-items:flex-end"><button class="btn" style="width:100%" onclick="guardarConexion()">Conectar</button></div>
+      </div>
+    </div>
+    <div id="nubeConectado" style="display:none">
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <button class="btn" style="flex:1;min-width:160px" onclick="sincronizar(true)">🔄 Sincronizar ahora</button>
+        <button class="btn" style="flex:0 0 auto;background:var(--panel2);color:var(--coral);border:1.5px solid rgba(251,113,133,.4);box-shadow:none" onclick="desconectarNube()">Desconectar</button>
+      </div>
+    </div>
+    <div id="nubeInfo" style="font-size:12px;color:var(--muted);margin-top:10px;font-family:'JetBrains Mono'"></div>
+  </div>
+  <div class="card">
+    <h3>Respaldo y sincronización <span class="tag">SEGURO</span></h3>
+    <p class="screen-sub" style="margin-bottom:12px">Los datos viven solo en este dispositivo. Exporta un archivo de respaldo para guardarlo o compartirlo con el equipo (por WhatsApp, correo, USB); al importarlo en otro dispositivo, las bases <b>se fusionan sin borrar nada</b>.</p>
+    <div style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn" style="flex:1;min-width:180px" onclick="exportarDatos()">📤 Exportar respaldo</button>
+      <button class="btn" style="flex:1;min-width:180px;background:var(--panel2);color:var(--cyan);border:1.5px solid rgba(34,211,238,.5);box-shadow:none" onclick="$('impFile').click()">📥 Importar respaldo</button>
+      <input type="file" id="impFile" accept=".json,application/json" style="display:none" onchange="importarDatos(this)">
+    </div>
+    <div id="respInfo" style="font-size:12px;color:var(--muted);margin-top:10px;font-family:'JetBrains Mono'"></div>
   </div>
   <div class="two-col">
     <div class="card"><h3>Necesidades más frecuentes <span class="tag">TOP</span></h3><div id="chartCat"></div></div>
@@ -383,7 +411,7 @@ textarea{resize:vertical;min-height:80px}
     <div id="mapaSVG"></div>
     <div class="legend">
       <span><span class="sw" style="background:var(--green)"></span> Con gestiones</span>
-      <span><span class="sw" style="background:var(--amber)"></span> Visitado</span>
+      <span><span class="sw" style="background:var(--celeste)"></span> Visitado 💙</span>
       <span><span class="sw" style="background:var(--coral)"></span> Sin llegada</span>
     </div>
     <div class="legend" id="legendDist" style="margin-top:6px;padding-top:8px;border-top:1px dashed var(--line2)"></div>
@@ -515,6 +543,17 @@ const DCOLOR = {
   "Tamanique":"#FB923C",    // naranja
   "La Libertad":"#60A5FA"   // azul
 };
+/* Contornos de los distritos aproximados a sus límites reales [lon,lat]:
+   Teotepeque al oeste (limita con Sonsonate), Jicalapa pequeño en la costa
+   entre Teotepeque y Chiltiupán, Chiltiupán y Tamanique subiendo a la
+   cordillera del Bálsamo, y La Libertad el bloque grande del este. */
+const LIMITES = {
+ "Teotepeque":[[-89.615,13.505],[-89.585,13.493],[-89.545,13.496],[-89.503,13.492],[-89.498,13.545],[-89.492,13.570],[-89.492,13.620],[-89.500,13.665],[-89.560,13.678],[-89.615,13.640]],
+ "Jicalapa":[[-89.503,13.492],[-89.462,13.489],[-89.458,13.520],[-89.452,13.556],[-89.480,13.562],[-89.498,13.545]],
+ "Chiltiupán":[[-89.462,13.489],[-89.428,13.487],[-89.422,13.530],[-89.420,13.600],[-89.425,13.660],[-89.460,13.678],[-89.490,13.665],[-89.492,13.620],[-89.492,13.570],[-89.480,13.562],[-89.452,13.556],[-89.458,13.520]],
+ "Tamanique":[[-89.428,13.487],[-89.373,13.489],[-89.368,13.520],[-89.362,13.570],[-89.368,13.630],[-89.400,13.658],[-89.425,13.660],[-89.420,13.600],[-89.422,13.530]],
+ "La Libertad":[[-89.373,13.489],[-89.322,13.484],[-89.282,13.474],[-89.226,13.486],[-89.205,13.484],[-89.205,13.545],[-89.240,13.578],[-89.300,13.578],[-89.340,13.602],[-89.368,13.630],[-89.362,13.570],[-89.368,13.520]]
+};
 /* casco convexo (contorno) de un conjunto de puntos proyectados */
 function hull(pts){
   if(pts.length<3) return pts;
@@ -589,15 +628,18 @@ async function load(){
     d.style.background="var(--amber)"; d.style.boxShadow="0 0 10px var(--amber)";
   }
   renderAll();
+  loadSyncCfg();
+  if(syncCfg && syncCfg.url) sincronizar(false);
 }
 function save(){
-  if(storageMode==="session") return; /* solo memoria */
+  if(storageMode==="session"){ programarPush(); return; }
   if(storageMode==="local"){
     clearTimeout(saveTimer);
     saveTimer = setTimeout(()=>{
       try{ localStorage.setItem(KEY, JSON.stringify(state)); }
       catch(e){ document.getElementById('syncTxt').textContent="ERROR AL GUARDAR"; }
     }, 300);
+    programarPush();
     return;
   }
   setSync(false);
@@ -631,6 +673,138 @@ function primeraLlegada(d,c){
   const v = state.visitas[d+"|"+c];
   if(v && v.ts) ts.push(v.ts); else if(v===true) ts.push(0);
   return ts.length ? Math.min(...ts) : null;
+}
+
+/* ================= NUBE: GOOGLE DRIVE (HOJA DE CÁLCULO) ================= */
+const SYNC_KEY = "eny_sync_cfg_v1";
+let syncCfg = null;
+let pushTimer = null;
+function loadSyncCfg(){
+  try{ if(hasLocal) syncCfg = JSON.parse(localStorage.getItem(SYNC_KEY) || "null"); }catch(e){ syncCfg=null; }
+  pintarNubeUI();
+}
+function pintarNubeUI(){
+  const on = !!(syncCfg && syncCfg.url);
+  $('nubeForm').style.display = on ? "none" : "block";
+  $('nubeConectado').style.display = on ? "block" : "none";
+  $('nubeTag').textContent = on ? "CONECTADO" : "NO CONECTADO";
+  $('nubeTag').style.color = on ? "var(--green)" : "var(--cyan)";
+  $('nubeTag').style.borderColor = on ? "var(--green)" : "rgba(34,211,238,.35)";
+}
+function guardarConexion(){
+  const url = ($('nubeUrl').value||"").trim();
+  const pin = ($('nubePin').value||"").trim();
+  if(!url.startsWith("https://script.google.com/")){ toast("⚠ El enlace debe empezar con https://script.google.com/"); return; }
+  if(!url.includes("/exec")){ toast("⚠ Usa el enlace que termina en /exec (no el de editar)"); return; }
+  if(!pin){ toast("⚠ Escribe la clave de equipo"); return; }
+  syncCfg = { url, pin };
+  try{ if(hasLocal) localStorage.setItem(SYNC_KEY, JSON.stringify(syncCfg)); }catch(e){}
+  pintarNubeUI();
+  sincronizar(true);
+}
+function desconectarNube(){
+  syncCfg = null;
+  try{ if(hasLocal) localStorage.removeItem(SYNC_KEY); }catch(e){}
+  pintarNubeUI();
+  $('nubeInfo').textContent = "Desconectado. Los datos siguen guardados en este dispositivo.";
+}
+async function pullNube(){
+  const r = await fetch(syncCfg.url + "?pin=" + encodeURIComponent(syncCfg.pin), { method:"GET" });
+  const j = await r.json();
+  if(j && j.error) throw new Error(j.error);
+  return (j && j.datos) ? j.datos : null;
+}
+async function pushNube(){
+  const r = await fetch(syncCfg.url, { method:"POST", body: JSON.stringify({ pin: syncCfg.pin, datos: state }) });
+  const j = await r.json();
+  if(j && j.error) throw new Error(j.error);
+}
+async function sincronizar(manual){
+  if(!syncCfg || !syncCfg.url) return;
+  const info = $('nubeInfo');
+  if(manual) info.textContent = "Sincronizando…";
+  setSync(false);
+  try{
+    const remoto = await pullNube();          // 1. bajar lo del equipo
+    if(remoto) fusionar(remoto);              // 2. fusionar sin perder nada
+    if(storageMode==="local"){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+    renderAll();
+    await pushNube();                         // 3. subir el consolidado
+    setSync(true);
+    const t=document.getElementById('syncTxt');
+    t.textContent = "SINCRONIZADO CON DRIVE";
+    info.textContent = "✓ Última sincronización: " + new Date().toLocaleTimeString('es-SV') + " · " + state.gestiones.length + " gestiones en la nube";
+  }catch(e){
+    setSync(true);
+    info.textContent = "⚠ No se pudo sincronizar (" + (e.message||"sin conexión") + "). Los datos siguen seguros en este dispositivo.";
+    if(manual) toast("⚠ Revisa el enlace, la clave o tu internet");
+  }
+}
+function programarPush(){
+  if(!syncCfg || !syncCfg.url) return;
+  clearTimeout(pushTimer);
+  pushTimer = setTimeout(()=>sincronizar(false), 2500);
+}
+
+/* ================= RESPALDO Y SINCRONIZACIÓN ================= */
+function exportarDatos(){
+  const payload = { app:"eny-la-libertad-costa", version:1, exportado:new Date().toISOString(), datos:state };
+  const nombre = "respaldo-eny-"+new Date().toISOString().slice(0,10)+".json";
+  const blob = new Blob([JSON.stringify(payload,null,1)], {type:"application/json"});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = nombre;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 2000);
+  $('respInfo').textContent = "✓ Respaldo descargado: "+nombre+" · "+state.gestiones.length+" gestiones, "+Object.keys(state.visitas).length+" visitas";
+  toast("📤 Respaldo descargado — guárdalo o compártelo con el equipo");
+}
+/* fusiona los datos importados con los locales sin borrar nada */
+function fusionar(remoto){
+  let nuevos = {g:0,v:0,e:0,z:0,c:0};
+  (remoto.gestiones||[]).forEach(rg=>{
+    const local = state.gestiones.find(x=>x.id===rg.id);
+    if(!local){ state.gestiones.push(rg); nuevos.g++; }
+    else { /* conservar el estado más avanzado */
+      const orden = ESTADOS.indexOf(rg.estado) > ESTADOS.indexOf(local.estado);
+      if(orden) local.estado = rg.estado;
+    }
+  });
+  state.gestiones.sort((a,b)=>b.ts-a.ts);
+  Object.entries(remoto.visitas||{}).forEach(([k,v])=>{
+    if(!state.visitas[k]){ state.visitas[k]=v; nuevos.v++; }
+    else if(v && v.ts && state.visitas[k].ts && v.ts < state.visitas[k].ts) state.visitas[k]=v; /* conservar la fecha más antigua de primera llegada */
+  });
+  (remoto.estructura||[]).forEach(rm=>{
+    if(!state.estructura.find(x=>x.id===rm.id)){ state.estructura.push(rm); nuevos.e++; }
+  });
+  Object.entries(remoto.extras||{}).forEach(([d,zonas])=>{
+    state.extras[d]=state.extras[d]||[];
+    zonas.forEach(z=>{ if(!TERR(d).some(c=>c.toLowerCase()===z.toLowerCase())){ state.extras[d].push(z); nuevos.z++; } });
+  });
+  Object.entries(remoto.comExtras||{}).forEach(([k,coms])=>{
+    state.comExtras[k]=state.comExtras[k]||[];
+    coms.forEach(c=>{ if(!state.comExtras[k].some(x=>x.toLowerCase()===c.toLowerCase())){ state.comExtras[k].push(c); nuevos.c++; } });
+  });
+  return nuevos;
+}
+function importarDatos(input){
+  const file = input.files && input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = ()=>{
+    try{
+      const payload = JSON.parse(reader.result);
+      const remoto = payload.datos || payload; /* acepta respaldo o estado crudo */
+      if(!remoto || (!Array.isArray(remoto.gestiones) && !remoto.visitas)) throw new Error("formato");
+      const n = fusionar(remoto);
+      save(); renderAll();
+      $('respInfo').textContent = `✓ Importado y fusionado: +${n.g} gestiones, +${n.v} visitas, +${n.e} miembros, +${n.z} zonas, +${n.c} comunidades`;
+      toast("📥 Datos fusionados correctamente");
+    }catch(e){ toast("⚠ El archivo no es un respaldo válido de esta app"); }
+    input.value = "";
+  };
+  reader.readAsText(file);
 }
 
 /* ================= NAVEGACIÓN ================= */
@@ -818,6 +992,7 @@ let mapView = "ALL";
 function mapBounds(){
   if(mapView==="ALL") return {lo1:-89.62, lo2:-89.20, la1:13.435, la2:13.695};
   const pts = TERR(mapView).map(c=>COORDS[mapView+"|"+c]).filter(Boolean);
+  (LIMITES[mapView]||[]).forEach(([lo,la])=>pts.push([la,lo]));
   const las=pts.map(p=>p[0]), los=pts.map(p=>p[1]);
   const padLo=0.018, padLa=0.02;
   return {lo1:Math.min(...los)-padLo, lo2:Math.max(...los)+padLo, la1:Math.min(...las)-padLa-0.01, la2:Math.max(...las)+padLa};
@@ -861,12 +1036,17 @@ function renderMapa(){
   const distsZ = mapView==="ALL" ? Object.keys(TERRITORIO) : [mapView];
   let zonas="";
   distsZ.forEach(d=>{
-    const pts = TERR(d).map(c=>COORDS[d+"|"+c]).filter(Boolean).map(([la,lo])=>[+PX(lo),+PY(la)]);
-    if(pts.length<3) return;
-    const h = padHull(hull(pts), zonaPad);
+    let h;
+    if(LIMITES[d]){
+      h = LIMITES[d].map(([lo,la])=>[+PX(lo),+PY(la)]);
+    } else {
+      const pts = TERR(d).map(c=>COORDS[d+"|"+c]).filter(Boolean).map(([la,lo])=>[+PX(lo),+PY(la)]);
+      if(pts.length<3) return;
+      h = padHull(hull(pts), zonaPad);
+    }
     const path = "M"+h.map(p=>`${p[0].toFixed(1)},${p[1].toFixed(1)}`).join(" L")+" Z";
     const col = DCOLOR[d];
-    zonas += `<path d="${path}" fill="${col}" fill-opacity=".08" stroke="${col}" stroke-opacity=".45" stroke-width="1.5" stroke-dasharray="5 5" stroke-linejoin="round"/>`;
+    zonas += `<path d="${path}" fill="${col}" fill-opacity=".10" stroke="${col}" stroke-opacity=".55" stroke-width="1.5" stroke-linejoin="round"/>`;
   });
 
   /* acomodo de etiquetas para que no se encimen */
@@ -899,7 +1079,7 @@ function renderMapa(){
     const coord=COORDS[d+"|"+c]; if(!coord) return;
     const [la,lo]=coord, x=+PX(lo).toFixed(1), y=+PY(la).toFixed(1);
     const count=gestCount(d,c), vis=isVisited(d,c);
-    const cls=count>0?"md-green":vis?"md-amber":"md-red";
+    const cls=count>0?"md-green":vis?"md-visit":"md-red";
     const halo=count>0?`<circle class="m-halo" cx="${x}" cy="${y}" r="${dotR+7}" fill="var(--green)"/>`:"";
     const short=c.replace('Casco urbano (Puerto)','Puerto').replace('Casco urbano','Casco');
     const p=labelFor(x,y,short);
@@ -947,7 +1127,7 @@ function renderMapa(){
 /* ================= LISTADO COMPLETO + ZONAS PROPIAS ================= */
 function chipDe(d,c){
   const count=gestCount(d,c), vis=isVisited(d,c);
-  const cls=count>0?"c-green":vis?"c-amber":"c-red";
+  const cls=count>0?"c-green":vis?"c-cel":"c-red";
   const extra=count>0?`<span class="cnt">${count} gest.</span>`:vis?`<span class="cnt">✓</span>`:"";
   return `<div class="chip ${cls}" onclick="openSheet('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}')">${esc(c)}${extra}</div>`;
 }
@@ -1000,7 +1180,7 @@ function openSheet(d,c){
   const count=gestCount(d,c), vis=isVisited(d,c);
   const status = count>0
     ? {t:`✓ Con ${count} gestión${count>1?'es':''} registrada${count>1?'s':''}`, col:"var(--green)"}
-    : vis ? {t:"✓ Visitado · sin gestiones aún", col:"var(--amber)"}
+    : vis ? {t:"✓ Visitado · sin gestiones aún", col:"var(--celeste)"}
     : {t:"✕ Sin llegada todavía", col:"var(--coral)"};
   let btns = `<button class="sh-btn primary" onclick="openWizard('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}')">＋ Registrar gestión aquí</button>`;
   if(count===0){
@@ -1124,9 +1304,9 @@ function renderAvance(){
   $('aMes').textContent=llegadas.filter(x=>x.ts&&now-x.ts<=30*DIA).length;
 
   $('timeline').innerHTML = llegadas.length ? llegadas.map(x=>{
-    const conG=x.nGest>0, color=conG?"var(--green)":"var(--amber)";
+    const conG=x.nGest>0, color=conG?"var(--green)":"var(--celeste)";
     const badge=conG?`<span class="tl-badge" style="color:var(--green);border-color:var(--green)">${x.nGest} GESTIÓN${x.nGest>1?'ES':''}</span>`
-      :`<span class="tl-badge" style="color:var(--amber);border-color:var(--amber)">VISITA</span>`;
+      :`<span class="tl-badge" style="color:var(--celeste);border-color:var(--celeste)">VISITA</span>`;
     const cuando=x.ts?new Date(x.ts).toLocaleDateString('es-SV',{day:'2-digit',month:'long',year:'numeric'}):"fecha no registrada";
     return `<div class="tl-item" style="--tc:${color}"><div class="tl-dot"></div>
       <div class="tl-body"><div class="tn">${esc(x.c)} <span style="color:var(--muted);font-weight:400">· ${esc(x.d)}</span>${badge}</div>
