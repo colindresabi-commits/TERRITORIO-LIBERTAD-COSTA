@@ -165,7 +165,9 @@ textarea{resize:vertical;min-height:80px}
 #mapaSVG svg{width:100%;height:auto;display:block;border-radius:12px}
 .m-dot{cursor:pointer;transition:.15s}
 .m-dot:active{r:12}
-.md-green{fill:var(--green)} .md-visit{fill:var(--celeste)} .md-red{fill:var(--coral)}
+.md-green{fill:var(--green);filter:drop-shadow(0 0 6px rgba(52,211,153,.8))}
+.md-visit{fill:var(--celeste);filter:drop-shadow(0 0 8px rgba(79,195,247,.95))}
+.md-red{fill:var(--coral);opacity:.75}
 .m-halo{pointer-events:none;opacity:.32}
 .m-lbl{font-family:'Space Grotesk';font-size:13px;font-weight:600;fill:#B9CBE4;letter-spacing:.5px;text-transform:uppercase;pointer-events:none}
 .m-sub{font-family:'JetBrains Mono';font-size:9px;fill:#5E7292;letter-spacing:1.5px;pointer-events:none}
@@ -300,6 +302,7 @@ textarea{resize:vertical;min-height:80px}
     <div class="kpi" style="--kc:var(--green)" onclick="kpiGo('resueltas')"><div class="n" id="kRes">0</div><div class="l">Resueltas</div></div>
     <div class="kpi" style="--kc:var(--coral)" onclick="kpiGo('urgentes')"><div class="n" id="kUrg">0</div><div class="l">Urgentes activas</div></div>
     <div class="kpi" style="--kc:var(--violet)" onclick="kpiGo('territorio')"><div class="n" id="kCov">0%</div><div class="l">Cobertura</div></div>
+    <div class="kpi" style="--kc:#C4B5FD" onclick="kpiGo('alcaldia')"><div class="n" id="kAlc">0</div><div class="l">🏛️ Para la alcaldía</div></div>
   </div>
   <div class="card">
     <h3>☁️ Conexión con Google Drive <span class="tag" id="nubeTag">NO CONECTADO</span></h3>
@@ -365,6 +368,8 @@ textarea{resize:vertical;min-height:80px}
     <div id="wCanales" class="opt-grid"></div>
     <div class="wh">Urgencia:</div>
     <div id="wUrgs" class="opt-grid" style="grid-template-columns:repeat(3,1fr)"></div>
+    <div class="wh">Alcance de la gestión:</div>
+    <div id="wTipos" class="opt-grid" style="grid-template-columns:repeat(2,1fr)"></div>
     <div class="wnav">
       <button class="btn ghost" onclick="wizGo(2)">← Atrás</button>
       <button class="btn" onclick="wizNext3()">Continuar →</button>
@@ -398,6 +403,7 @@ textarea{resize:vertical;min-height:80px}
     <select id="filtDistrito"><option value="">Distrito: todos</option></select>
     <select id="filtCat"><option value="">Categoría: todas</option></select>
     <select id="filtUrg"><option value="">Urgencia: todas</option><option>Alta</option><option>Media</option><option>Baja</option></select>
+    <select id="filtTipo"><option value="">Alcance: todos</option><option value="rapida">⚡ Gestión rápida</option><option value="alcaldia">🏛️ Al llegar a la alcaldía</option></select>
   </div>
   <div id="listaGestiones"></div>
 </section>
@@ -413,6 +419,7 @@ textarea{resize:vertical;min-height:80px}
       <span><span class="sw" style="background:var(--green)"></span> Con gestiones</span>
       <span><span class="sw" style="background:var(--celeste)"></span> Visitado 💙</span>
       <span><span class="sw" style="background:var(--coral)"></span> Sin llegada</span>
+      <span><span class="sw" style="background:var(--celeste);transform:rotate(45deg);border-radius:2px;opacity:.7"></span> Comunidad ubicada (en zoom)</span>
     </div>
     <div class="legend" id="legendDist" style="margin-top:6px;padding-top:8px;border-top:1px dashed var(--line2)"></div>
   </div>
@@ -534,6 +541,26 @@ const COMUNIDADES = {
  "La Libertad|El Majahual": ["Playa El Majahual","Playa San Blas"],
  "La Libertad|San Diego": ["Playa San Diego","El Amatal"]
 };
+/* Coordenadas [lat,lon] de comunidades ubicables (se muestran al hacer zoom a un distrito).
+   Las comunidades sin coordenada siguen apareciendo en fichas y listados. */
+const COORDS_COM = {
+ "Tamanique|El Sunzal|Playa El Tunco":[13.4925,-89.3805],
+ "Tamanique|El Sunzal|Playa El Sunzal":[13.4930,-89.3920],
+ "Tamanique|El Palmar|Playa El Palmarcito":[13.4950,-89.4130],
+ "Chiltiupán|El Zonte|Playa El Zonte":[13.4930,-89.4405],
+ "Chiltiupán|El Zonte|Lotif. Shutia":[13.4960,-89.4500],
+ "Teotepeque|Mizata|Playa Mizata":[13.4985,-89.5850],
+ "Jicalapa|La Perla|La Playa":[13.4935,-89.4820],
+ "La Libertad|Casco urbano (Puerto)|Playa La Paz":[13.4870,-89.3195],
+ "La Libertad|Casco urbano (Puerto)|Playa El Obispo":[13.4855,-89.3255],
+ "La Libertad|Casco urbano (Puerto)|Punta Roca":[13.4845,-89.3305],
+ "La Libertad|Casco urbano (Puerto)|Playa Conchalío":[13.4900,-89.3400],
+ "La Libertad|Casco urbano (Puerto)|El Cocal":[13.4890,-89.3480],
+ "La Libertad|El Majahual|Playa San Blas":[13.4895,-89.3560],
+ "La Libertad|El Majahual|Playa El Majahual":[13.4900,-89.3660],
+ "La Libertad|San Diego|Playa San Diego":[13.4740,-89.2800],
+ "La Libertad|San Diego|El Amatal":[13.4760,-89.2580]
+};
 const ESTADOS = ["Recibido","En análisis","Asignado","En gestión","Resuelto","No procede"];
 /* color de identidad de cada distrito */
 const DCOLOR = {
@@ -576,6 +603,7 @@ const CATS = [["💧","Agua potable"],["🏥","Salud"],["🛣️","Calles y cami
 const CANALES = [["🤝","Directo en territorio"],["💬","WhatsApp"],["📘","Facebook"],
   ["📸","Instagram"],["🎵","TikTok"],["🧭","Referido por estructura"]];
 const URGS = [["🔴","Alta"],["🟡","Media"],["🟢","Baja"]];
+const TIPOS = [["⚡","rapida","Gestión rápida"],["🏛️","alcaldia","Al llegar a la alcaldía"]];
 const KEY = "eny_dashboard_v1";
 
 let state = { gestiones: [], visitas: {}, estructura: [], extras: {}, comExtras: {} };
@@ -627,9 +655,19 @@ async function load(){
     t.textContent="SOLO SESIÓN";
     d.style.background="var(--amber)"; d.style.boxShadow="0 0 10px var(--amber)";
   }
+  /* sembrar los datos de fábrica (solo agrega lo que falte) */
+  const nSem = fusionar(SEMILLA);
+  if(nSem.g||nSem.v||nSem.e||nSem.z||nSem.c) save();
   renderAll();
   loadSyncCfg();
   if(syncCfg && syncCfg.url) sincronizar(false);
+  /* sincronización automática: cada 60 s y al volver a la app */
+  setInterval(()=>{ if(syncCfg && syncCfg.url) sincronizar(false); }, 60000);
+  let ultimoFoco = 0;
+  window.addEventListener('focus', ()=>{
+    const ahora = Date.now();
+    if(ahora - ultimoFoco > 8000 && syncCfg && syncCfg.url){ ultimoFoco = ahora; sincronizar(false); }
+  });
 }
 function save(){
   if(storageMode==="session"){ programarPush(); return; }
@@ -676,11 +714,23 @@ function primeraLlegada(d,c){
 }
 
 /* ================= NUBE: GOOGLE DRIVE (HOJA DE CÁLCULO) ================= */
+/* Datos de fábrica: el trabajo ya documentado de la campaña. Se fusionan sin duplicar. */
+const SEMILLA = {"gestiones": [{"id": 1783681200001, "ts": 1783681200000, "nombre": "ADESCO Jute La Esperanza (líder)", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Jute La Esperanza", "categoria": "Energía eléctrica", "canal": "Directo en territorio", "urgencia": "Media", "tipo": "alcaldia", "desc": "Iluminación para la calle de la comunidad. Compromiso a ejecutar al llegar a la alcaldía.", "resp": "Equipo Eny", "estado": "Recibido"}, {"id": 1783681200002, "ts": 1783681200000, "nombre": "ADESCO Jute La Esperanza (líder)", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Jute La Esperanza", "categoria": "Deporte y juventud", "canal": "Directo en territorio", "urgencia": "Media", "tipo": "alcaldia", "desc": "Juegos para niños en la comunidad. Compromiso a ejecutar al llegar a la alcaldía.", "resp": "Equipo Eny", "estado": "Recibido"}, {"id": 1783681200003, "ts": 1783681200000, "nombre": "ADESCO Jute La Esperanza (líder)", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Jute La Esperanza", "categoria": "Otro", "canal": "Directo en territorio", "urgencia": "Media", "tipo": "alcaldia", "desc": "Construcción de casa comunal. Compromiso a ejecutar al llegar a la alcaldía.", "resp": "Equipo Eny", "estado": "Recibido"}, {"id": 1783681200004, "ts": 1783681200000, "nombre": "ADESCO Jute La Esperanza (líder)", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Jute La Esperanza", "categoria": "Otro", "canal": "Directo en territorio", "urgencia": "Media", "tipo": "alcaldia", "desc": "Construcción de muro para la comunidad. Compromiso a ejecutar al llegar a la alcaldía.", "resp": "Equipo Eny", "estado": "Recibido"}, {"id": 1783681200005, "ts": 1783681200000, "nombre": "ADESCO Jute La Esperanza (líder)", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Jute La Esperanza", "categoria": "Salud", "canal": "Directo en territorio", "urgencia": "Media", "tipo": "rapida", "desc": "Fumigación en la comunidad — gestión rápida solicitada por la ADESCO.", "resp": "Equipo Eny", "estado": "Recibido"}, {"id": 1783681200006, "ts": 1783681200000, "nombre": "ADESCO Jute La Esperanza (líder)", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Jute La Esperanza", "categoria": "Otro", "canal": "Directo en territorio", "urgencia": "Media", "tipo": "rapida", "desc": "Entrega de víveres para familias de la comunidad — gestión rápida solicitada por la ADESCO.", "resp": "Equipo Eny", "estado": "Recibido"}, {"id": 1783677600001, "ts": 1783677600000, "nombre": "Comunidad Cuesta El Toro", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Cuesta El Toro", "categoria": "Salud", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Entrega de silla de ruedas a persona de la comunidad Cuesta El Toro.", "resp": "Equipo Eny", "estado": "Resuelto"}, {"id": 1783677600002, "ts": 1783677600000, "nombre": "Tortillería de Cuesta El Toro", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "Cuesta El Toro", "categoria": "Vivienda", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Entrega de techo con láminas para una tortillería de la comunidad, en apoyo a su medio de vida.", "resp": "Equipo Eny", "estado": "Resuelto"}, {"id": 1783159200007, "ts": 1783159200000, "nombre": "Lotificación Shutia", "tel": "", "distrito": "Chiltiupán", "canton": "El Zonte", "comunidad": "Lotif. Shutia", "categoria": "Calles y caminos", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Entrega de bolsas de cemento junto a la estructura de Nuevas Ideas Chiltiupán. Se constató una deuda histórica de la comunidad sin respuesta durante años; dialogar y dar seguimiento a sus necesidades.", "resp": "Estructura NI Chiltiupán", "estado": "Resuelto"}, {"id": 1782986400001, "ts": 1782986400000, "nombre": "Comunidad La Laguneta", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "La Laguneta", "categoria": "Calles y caminos", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Entrega de cemento para el mejoramiento de la calle por donde transitan diariamente, junto a la Estructura de Nuevas Ideas Puerto de La Libertad.", "resp": "Estructura NI Puerto de La Libertad", "estado": "Resuelto"}, {"id": 1782986400002, "ts": 1782986400000, "nombre": "Comunidad Loma Linda", "tel": "", "distrito": "Tamanique", "canton": "Casco urbano", "comunidad": "Loma Linda", "categoria": "Calles y caminos", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Entrega de bolsas de cemento para apoyar a las familias de la zona, junto a la estructura de Nuevas Ideas de Tamanique.", "resp": "Estructura NI Tamanique", "estado": "Resuelto"}, {"id": 1782986400003, "ts": 1782986400000, "nombre": "Comunidad Loma Linda", "tel": "", "distrito": "Tamanique", "canton": "Casco urbano", "comunidad": "Loma Linda", "categoria": "Calles y caminos", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Recorrido por la comunidad: se identificaron puntos de la calle que requieren atención antes de las próximas lluvias. Dar seguimiento a la intervención.", "resp": "Estructura NI Tamanique", "estado": "En análisis"}, {"id": 1782986400004, "ts": 1782986400000, "nombre": "Hogar Santo Hermano Pedro de Betancourt", "tel": "", "distrito": "La Libertad", "canton": "Casco urbano (Puerto)", "comunidad": "", "categoria": "Adulto mayor", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Visita al Hogar de Ancianos Santo Hermano Pedro de Betancourt: convivencia con sus residentes.", "resp": "Equipo Eny", "estado": "Resuelto"}, {"id": 1782986400005, "ts": 1782986400000, "nombre": "Comunidad El Amatal", "tel": "", "distrito": "La Libertad", "canton": "San Diego", "comunidad": "El Amatal", "categoria": "Calles y caminos", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Intervención de calle entregada en la comunidad El Amatal, cantón San Diego.", "resp": "Equipo Eny", "estado": "Resuelto"}, {"id": 1782986400006, "ts": 1782986400000, "nombre": "Lotificación La Ceiba", "tel": "", "distrito": "La Libertad", "canton": "Cangrejera", "comunidad": "Lotif. La Ceiba", "categoria": "Calles y caminos", "canal": "Directo en territorio", "urgencia": "Media", "desc": "Intervención de calle entregada en la Lotificación La Ceiba, cantón Cangrejera.", "resp": "Equipo Eny", "estado": "Resuelto"}], "visitas": {"Jicalapa|Casco urbano": {"ts": 1783612800000}}, "estructura": [], "extras": {}, "comExtras": {"La Libertad|Casco urbano (Puerto)": ["La Laguneta", "Cuesta El Toro", "Jute La Esperanza"], "Tamanique|Casco urbano": ["Loma Linda"], "La Libertad|Cangrejera": ["Lotif. La Ceiba"], "Chiltiupán|El Zonte": ["Lotif. Shutia"]}};
 const SYNC_KEY = "eny_sync_cfg_v1";
+/* Conexión de fábrica: la app se conecta sola al Google Sheet del equipo.
+   Si algún día cambian la clave o el script, actualizar aquí y resubir. */
+const NUBE_PREDETERMINADA = {
+  url: "https://script.google.com/macros/s/AKfycbyI-bMVq_-AT6J_tJysre6YF8DE8JmUeBUSCNm0DfyWhvkyR6M110p6_LLf4N74CvSc/exec",
+  pin: "eny2026costa"
+};
 let syncCfg = null;
 let pushTimer = null;
 function loadSyncCfg(){
-  try{ if(hasLocal) syncCfg = JSON.parse(localStorage.getItem(SYNC_KEY) || "null"); }catch(e){ syncCfg=null; }
+  let guardado = null;
+  try{ if(hasLocal) guardado = JSON.parse(localStorage.getItem(SYNC_KEY) || "null"); }catch(e){}
+  if(guardado && guardado.off){ syncCfg = null; }               /* el usuario se desconectó a propósito */
+  else if(guardado && guardado.url){ syncCfg = guardado; }      /* conexión propia guardada */
+  else if(NUBE_PREDETERMINADA.url){ syncCfg = NUBE_PREDETERMINADA; } /* conexión de fábrica */
   pintarNubeUI();
 }
 function pintarNubeUI(){
@@ -699,24 +749,33 @@ function guardarConexion(){
   if(!pin){ toast("⚠ Escribe la clave de equipo"); return; }
   syncCfg = { url, pin };
   try{ if(hasLocal) localStorage.setItem(SYNC_KEY, JSON.stringify(syncCfg)); }catch(e){}
+  /* conexión manual reemplaza a la de fábrica en este dispositivo */
   pintarNubeUI();
   sincronizar(true);
 }
 function desconectarNube(){
   syncCfg = null;
-  try{ if(hasLocal) localStorage.removeItem(SYNC_KEY); }catch(e){}
+  try{ if(hasLocal) localStorage.setItem(SYNC_KEY, JSON.stringify({off:true})); }catch(e){}
   pintarNubeUI();
-  $('nubeInfo').textContent = "Desconectado. Los datos siguen guardados en este dispositivo.";
+  $('nubeInfo').textContent = "Desconectado. Los datos siguen guardados en este dispositivo. Para volver, usa Conectar.";
+}
+async function pedirJSON(url, opts){
+  const r = await fetch(url, opts);
+  const txt = await r.text();
+  try{ return JSON.parse(txt); }
+  catch(e){
+    if(/<html|<!doctype/i.test(txt))
+      throw new Error("el script pide inicio de sesión → en Apps Script: Implementar → Administrar implementaciones → ✎ → 'Quién tiene acceso: CUALQUIER USUARIO' → Nueva versión → Implementar");
+    throw new Error("respuesta inesperada del script — verifica que la URL termine en /exec");
+  }
 }
 async function pullNube(){
-  const r = await fetch(syncCfg.url + "?pin=" + encodeURIComponent(syncCfg.pin), { method:"GET" });
-  const j = await r.json();
-  if(j && j.error) throw new Error(j.error);
+  const j = await pedirJSON(syncCfg.url + "?pin=" + encodeURIComponent(syncCfg.pin), { method:"GET" });
+  if(j && j.error) throw new Error(j.error === "clave incorrecta" ? "clave incorrecta → la clave escrita aquí no coincide con la del script (línea 8). Recuerda re-implementar con 'Nueva versión' tras cambiarla" : j.error);
   return (j && j.datos) ? j.datos : null;
 }
 async function pushNube(){
-  const r = await fetch(syncCfg.url, { method:"POST", body: JSON.stringify({ pin: syncCfg.pin, datos: state }) });
-  const j = await r.json();
+  const j = await pedirJSON(syncCfg.url, { method:"POST", body: JSON.stringify({ pin: syncCfg.pin, datos: state }) });
   if(j && j.error) throw new Error(j.error);
 }
 async function sincronizar(manual){
@@ -736,8 +795,9 @@ async function sincronizar(manual){
     info.textContent = "✓ Última sincronización: " + new Date().toLocaleTimeString('es-SV') + " · " + state.gestiones.length + " gestiones en la nube";
   }catch(e){
     setSync(true);
-    info.textContent = "⚠ No se pudo sincronizar (" + (e.message||"sin conexión") + "). Los datos siguen seguros en este dispositivo.";
-    if(manual) toast("⚠ Revisa el enlace, la clave o tu internet");
+    info.innerHTML = "⚠ <b style='color:var(--coral)'>No se pudo sincronizar:</b> " + esc(e.message||"sin internet") + "<br>Tus datos siguen seguros en este dispositivo y se subirán al reconectar.";
+    document.getElementById('syncTxt').textContent = "SIN CONEXIÓN A DRIVE";
+    if(manual) toast("⚠ Mira el detalle del error bajo la tarjeta ☁️");
   }
 }
 function programarPush(){
@@ -816,10 +876,11 @@ function goTab(name){
 document.querySelectorAll('.nv').forEach(b=> b.onclick=()=>goTab(b.dataset.t));
 function kpiGo(tipo){
   if(tipo==="territorio"){ goTab('territorio'); return; }
-  $('filtEstado').value=""; $('filtDistrito').value=""; $('filtCat').value=""; $('filtUrg').value="";
+  $('filtEstado').value=""; $('filtDistrito').value=""; $('filtCat').value=""; $('filtUrg').value=""; $('filtTipo').value="";
   if(tipo==="proceso") $('filtEstado').value="__activos";
   if(tipo==="resueltas") $('filtEstado').value="Resuelto";
   if(tipo==="urgentes"){ $('filtEstado').value="__activos"; $('filtUrg').value="Alta"; }
+  if(tipo==="alcaldia"){ $('filtTipo').value="alcaldia"; }
   renderGestiones(); goTab('gestiones');
 }
 
@@ -828,7 +889,7 @@ let wiz = {};
 let editId = null;
 function openWizard(prefD, prefC, prefCom){
   editId = null;
-  wiz = { distrito: prefD||null, canton: prefC||null, categoria:null, canal:"Directo en territorio", urgencia:"Media" };
+  wiz = { distrito: prefD||null, canton: prefC||null, categoria:null, canal:"Directo en territorio", urgencia:"Media", tipo:"rapida" };
   ['fNombre','fTel','fCom','fDesc','fResp'].forEach(id=>$(id).value='');
   if(prefCom) $('fCom').value = prefCom;
   closeSheet();
@@ -840,7 +901,7 @@ function editGestion(id){
   const g = state.gestiones.find(x=>x.id===id);
   if(!g) return;
   editId = id;
-  wiz = { distrito:g.distrito, canton:g.canton, categoria:g.categoria, canal:g.canal, urgencia:g.urgencia };
+  wiz = { distrito:g.distrito, canton:g.canton, categoria:g.categoria, canal:g.canal, urgencia:g.urgencia, tipo:g.tipo||"rapida" };
   $('fNombre').value=g.nombre; $('fTel').value=g.tel||''; $('fCom').value=g.comunidad||'';
   $('fDesc').value=g.desc; $('fResp').value=g.resp||'';
   renderWizard();
@@ -892,12 +953,15 @@ function renderWizard(){
     `<div class="opt ${wiz.canal===c?'sel':''}" onclick="wizPickCanal('${c.replace(/'/g,"\\'")}')"><span class="em">${e}</span>${esc(c)}</div>`).join('');
   $('wUrgs').innerHTML = URGS.map(([e,u])=>
     `<div class="opt ${wiz.urgencia===u?'sel':''}" onclick="wizPickUrg('${u}')"><span class="em">${e}</span>${u}</div>`).join('');
+  $('wTipos').innerHTML = TIPOS.map(([e,v,t])=>
+    `<div class="opt ${wiz.tipo===v?'sel':''}" onclick="wizPickTipo('${v}')"><span class="em">${e}</span>${t}</div>`).join('');
 }
 function wizPickD(d){ wiz.distrito=d; wiz.canton=null; renderWizard(); renderResume(); }
 function wizPickC(c){ wiz.canton=c; renderWizard(); setTimeout(()=>wizGo(2),180); }
 function wizPickCat(c){ wiz.categoria=c; renderWizard(); setTimeout(()=>wizGo(3),180); }
 function wizPickCanal(c){ wiz.canal=c; renderWizard(); renderResume(); }
 function wizPickUrg(u){ wiz.urgencia=u; renderWizard(); renderResume(); }
+function wizPickTipo(v){ wiz.tipo=v; renderWizard(); renderResume(); }
 function wizNext3(){ wizGo(4); }
 
 function addGestion(){
@@ -911,7 +975,7 @@ function addGestion(){
       Object.assign(g, {
         nombre, tel:$('fTel').value.trim(),
         distrito:wiz.distrito, canton:wiz.canton, comunidad:$('fCom').value.trim(),
-        categoria:wiz.categoria, canal:wiz.canal, urgencia:wiz.urgencia,
+        categoria:wiz.categoria, canal:wiz.canal, urgencia:wiz.urgencia, tipo:wiz.tipo||"rapida",
         desc, resp:$('fResp').value.trim()
       });
       toast("✓ Gestión actualizada");
@@ -921,7 +985,7 @@ function addGestion(){
     state.gestiones.unshift({
       id:Date.now(), ts:Date.now(), nombre, tel:$('fTel').value.trim(),
       distrito:wiz.distrito, canton:wiz.canton, comunidad:$('fCom').value.trim(),
-      categoria:wiz.categoria, canal:wiz.canal, urgencia:wiz.urgencia,
+      categoria:wiz.categoria, canal:wiz.canal, urgencia:wiz.urgencia, tipo:wiz.tipo||"rapida",
       desc, resp:$('fResp').value.trim(), estado:"Recibido"
     });
     toast("✓ Gestión registrada en "+wiz.canton+", "+wiz.distrito);
@@ -937,7 +1001,7 @@ function initSelects(){
   $('filtDistrito').innerHTML=`<option value="">Distrito: todos</option>${opts}`;
   $('eDistrito').innerHTML=opts;
   $('filtCat').innerHTML=`<option value="">Categoría: todas</option>`+CATS.map(([,c])=>`<option>${c}</option>`).join('');
-  ['filtEstado','filtDistrito','filtCat','filtUrg'].forEach(id=>$(id).onchange=renderGestiones);
+  ['filtEstado','filtDistrito','filtCat','filtUrg','filtTipo'].forEach(id=>$(id).onchange=renderGestiones);
 }
 function setEstado(id,est){ const g=state.gestiones.find(x=>x.id===id); if(g){g.estado=est; save(); renderAll();} }
 let delPend=null, delTimer=null;
@@ -955,9 +1019,10 @@ function delGestion(id, btn){
   toast("Gestión eliminada");
 }
 function renderGestiones(){
-  const fe=$('filtEstado').value, fd=$('filtDistrito').value, fc=$('filtCat').value, fu=$('filtUrg').value;
+  const fe=$('filtEstado').value, fd=$('filtDistrito').value, fc=$('filtCat').value, fu=$('filtUrg').value, ft=$('filtTipo').value;
   const okE=g=>!fe?true:(fe==="__activos"?!["Resuelto","No procede"].includes(g.estado):g.estado===fe);
-  const list=state.gestiones.filter(g=>okE(g)&&(!fd||g.distrito===fd)&&(!fc||g.categoria===fc)&&(!fu||g.urgencia===fu));
+  const okT=g=>!ft?true:((g.tipo||"rapida")===ft);
+  const list=state.gestiones.filter(g=>okE(g)&&okT(g)&&(!fd||g.distrito===fd)&&(!fc||g.categoria===fc)&&(!fu||g.urgencia===fu));
   const el=$('listaGestiones');
   if(!list.length){
     el.innerHTML=`<div class="empty">No hay casos con estos filtros.<br>Toca el botón <b style="color:var(--cyan)">＋</b> de abajo para registrar el primero.</div>`;
@@ -971,6 +1036,7 @@ function renderGestiones(){
           <div class="g-loc">▸ ${esc(g.canton)}, ${esc(g.distrito)}${g.comunidad?` · ${esc(g.comunidad)}`:''}</div>
         </div>
         <div class="badges">
+          ${(g.tipo==="alcaldia")?`<span class="badge" style="color:var(--violet);border-color:var(--violet)">🏛️ ALCALDÍA</span>`:""}
           <span class="badge" style="color:${urgColor(g.urgencia)};border-color:${urgColor(g.urgencia)}">${g.urgencia.toUpperCase()}</span>
           <span class="badge" style="color:var(--muted);border-color:var(--line2)">${esc(g.canal)}</span>
         </div>
@@ -1080,15 +1146,34 @@ function renderMapa(){
     const [la,lo]=coord, x=+PX(lo).toFixed(1), y=+PY(la).toFixed(1);
     const count=gestCount(d,c), vis=isVisited(d,c);
     const cls=count>0?"md-green":vis?"md-visit":"md-red";
-    const halo=count>0?`<circle class="m-halo" cx="${x}" cy="${y}" r="${dotR+7}" fill="var(--green)"/>`:"";
+    const r2 = (count>0||vis) ? dotR+1.5 : dotR;
+    const halo = count>0 ? `<circle class="m-halo" cx="${x}" cy="${y}" r="${r2+8}" fill="var(--green)"/>`
+               : vis ? `<circle class="m-halo" cx="${x}" cy="${y}" r="${r2+9}" fill="var(--celeste)" opacity=".5"/><circle class="m-halo" cx="${x}" cy="${y}" r="${r2+15}" fill="var(--celeste)" opacity=".18"/>`
+               : "";
     const short=c.replace('Casco urbano (Puerto)','Puerto').replace('Casco urbano','Casco');
     const p=labelFor(x,y,short);
     names+=`<text class="m-name" font-size="${fSize}" x="${p.lx.toFixed(1)}" y="${p.ly.toFixed(1)}" text-anchor="${p.anchor}">${esc(short)}</text>`;
     const info=`${c} · ${d}`;
-    dots+=`${halo}<circle class="m-dot ${cls}" cx="${x}" cy="${y}" r="${dotR}" stroke="${DCOLOR[d]}" stroke-width="2.5"
+    dots+=`${halo}<circle class="m-dot ${cls}" cx="${x}" cy="${y}" r="${r2}" stroke="${DCOLOR[d]}" stroke-width="2.5"
       onclick="openSheet('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}')"><title>${esc(info)}</title></circle>`;
   }));
-  dots = names + dots; /* nombres debajo, puntos encima para que siempre se puedan tocar */
+  /* comunidades ubicadas: rombos pequeños, solo en zoom de distrito */
+  let comDots="";
+  if(showZoom){
+    Object.entries(COORDS_COM).forEach(([k,[la,lo]])=>{
+      const [d,c,com]=k.split("|");
+      if(d!==mapView) return;
+      const x=+PX(lo).toFixed(1), y=+PY(la).toFixed(1);
+      const n=comCount(d,c,com);
+      const col = n>0 ? "var(--green)" : "var(--celeste)";
+      comDots+=`<rect x="${x-5}" y="${y-5}" width="10" height="10" transform="rotate(45 ${x} ${y})"
+        fill="${col}" fill-opacity="${n>0?'.95':'.55'}" stroke="${col}" style="cursor:pointer"
+        onclick="openWizard('${d.replace(/'/g,"\\'")}','${c.replace(/'/g,"\\'")}','${com.replace(/'/g,"\\'")}')">
+        <title>${esc(com)} · ${esc(c)}${n>0?` — ${n} gestión(es)`:''}</title></rect>
+        <text class="m-name" font-size="9" x="${x}" y="${y+16}" text-anchor="middle" opacity=".85">${esc(com)}</text>`;
+    });
+  }
+  dots = names + comDots + dots; /* nombres debajo, puntos encima para que siempre se puedan tocar */
 
   $('mapaSVG').innerHTML=`
   <svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mapa de La Libertad Costa">
@@ -1380,6 +1465,7 @@ function renderPanel(){
   $('kRes').textContent=g.filter(x=>x.estado==="Resuelto").length;
   $('kPend').textContent=g.filter(x=>!["Resuelto","No procede"].includes(x.estado)).length;
   $('kUrg').textContent=g.filter(x=>x.urgencia==="Alta"&&!["Resuelto","No procede"].includes(x.estado)).length;
+  $('kAlc').textContent=g.filter(x=>(x.tipo||"rapida")==="alcaldia"&&!["Resuelto","No procede"].includes(x.estado)).length;
   let tot=0,cub=0;
   Object.keys(TERRITORIO).forEach(d=>TERR(d).forEach(c=>{tot++;if(gestCount(d,c)>0||isVisited(d,c))cub++;}));
   $('kCov').textContent=tot?Math.round(cub/tot*100)+"%":"0%";
